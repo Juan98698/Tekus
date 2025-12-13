@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tekus.Domain.Exceptions;
 using Tekus.Domain.ValueObjects;
 
 namespace Tekus.Domain.Entities
@@ -34,7 +35,7 @@ namespace Tekus.Domain.Entities
         private void SetValorHoraUsd(decimal valorHoraUsd)
         {
             if (valorHoraUsd <= 0)
-                throw new ArgumentException("El valor por hora debe ser mayor a cero");
+                throw new InvalidServiceValueException(valorHoraUsd);
 
             ValorHoraUsd = valorHoraUsd;
         }
@@ -48,7 +49,7 @@ namespace Tekus.Domain.Entities
         public void AgregarPais(Pais pais)
         {
             if (_paises.Any(p => p.Equals(pais)))
-                throw new ArgumentException("El país ya está asociado al servicio");
+                throw new DuplicateEntityException("País");
 
             _paises.Add(pais);
         }

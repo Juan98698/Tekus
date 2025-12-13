@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tekus.Domain.Entities;
+using Tekus.Domain.Exceptions;
 
 namespace Tekus.Domain.Entities
 {
@@ -31,7 +32,7 @@ namespace Tekus.Domain.Entities
         private void SetNit(string nit)
         {
             if (string.IsNullOrWhiteSpace(nit))
-                throw new ArgumentException("El NIT es obligatorio");
+                throw new RequiredFieldException("NIT");
 
             Nit = nit.Trim();
         }
@@ -65,7 +66,7 @@ namespace Tekus.Domain.Entities
         public void AgregarServicio(Servicio servicio)
         {
             if (_servicios.Any(s => s.Nombre == servicio.Nombre))
-                throw new ArgumentException("El proveedor ya tiene un servicio con ese nombre");
+                throw new DuplicateEntityException("Servicio");
 
             _servicios.Add(servicio);
         }

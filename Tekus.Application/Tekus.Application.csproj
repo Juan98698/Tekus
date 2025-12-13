@@ -10,4 +10,11 @@
     <ProjectReference Include="..\Tekus.Domain\Tekus.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\Services\" />
+    <Folder Include="Common\" />
+    <Folder Include="Validators\" />
+    <Folder Include="UseCases\Servicios\" />
+  </ItemGroup>
+
 </Project>
