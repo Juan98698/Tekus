@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36705.20 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Domain", "Tekus.Domain\Tekus.Domain.csproj", "{8D7BA1C1-8A3B-447B-86AD-F13F8BADAD24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Application", "Tekus.Application\Tekus.Application.csproj", "{24C23DF4-1D8D-490F-AC50-7A543BA5A81F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Infrastructure", "Tekus.Infrastructure\Tekus.Infrastructure.csproj", "{CA539820-3F6F-4C15-A5ED-8316E9EBEF73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.API", "Tekus.API\Tekus.API.csproj", "{859FB485-F765-4409-9163-3D80F374F4D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Tests.Unit", "Tekus.Tests.Unit\Tekus.Tests.Unit.csproj", "{FEC14BB9-B33C-4306-B203-9EF1A57DC14A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Tests.Integration", "Tekus.Tests.Integration\Tekus.Tests.Integration.csproj", "{51F02A86-18DF-48FD-9EEE-9AA8087E60A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Frontend", "Tekus.Frontend\Tekus.Frontend.csproj", "{930BC5F1-F811-43D2-8788-0E95682197AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D7BA1C1-8A3B-447B-86AD-F13F8BADAD24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D7BA1C1-8A3B-447B-86AD-F13F8BADAD24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D7BA1C1-8A3B-447B-86AD-F13F8BADAD24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D7BA1C1-8A3B-447B-86AD-F13F8BADAD24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24C23DF4-1D8D-490F-AC50-7A543BA5A81F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24C23DF4-1D8D-490F-AC50-7A543BA5A81F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24C23DF4-1D8D-490F-AC50-7A543BA5A81F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24C23DF4-1D8D-490F-AC50-7A543BA5A81F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA539820-3F6F-4C15-A5ED-8316E9EBEF73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA539820-3F6F-4C15-A5ED-8316E9EBEF73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA539820-3F6F-4C15-A5ED-8316E9EBEF73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA539820-3F6F-4C15-A5ED-8316E9EBEF73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{859FB485-F765-4409-9163-3D80F374F4D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{859FB485-F765-4409-9163-3D80F374F4D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{859FB485-F765-4409-9163-3D80F374F4D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{859FB485-F765-4409-9163-3D80F374F4D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEC14BB9-B33C-4306-B203-9EF1A57DC14A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEC14BB9-B33C-4306-B203-9EF1A57DC14A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEC14BB9-B33C-4306-B203-9EF1A57DC14A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEC14BB9-B33C-4306-B203-9EF1A57DC14A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51F02A86-18DF-48FD-9EEE-9AA8087E60A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51F02A86-18DF-48FD-9EEE-9AA8087E60A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51F02A86-18DF-48FD-9EEE-9AA8087E60A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51F02A86-18DF-48FD-9EEE-9AA8087E60A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{930BC5F1-F811-43D2-8788-0E95682197AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{930BC5F1-F811-43D2-8788-0E95682197AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{930BC5F1-F811-43D2-8788-0E95682197AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{930BC5F1-F811-43D2-8788-0E95682197AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {207206A8-18D1-4A5B-961E-A149A7B002CB}
+	EndGlobalSection
+EndGlobal
