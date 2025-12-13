@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tekus.Domain.Entities;
+using Tekus.Application.Common;
 
 namespace Tekus.Application.Interfaces.Repositories
 {
@@ -14,5 +15,7 @@ namespace Tekus.Application.Interfaces.Repositories
         Task<Proveedor?> GetByNitAsync(string nit);
         Task UpdateAsync(Proveedor proveedor);
         Task<bool> ExistsAsync(int id);
+        Task<PagedResult<Proveedor>> GetPagedAsync(PagedRequest request);
+
     }
 }
