@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Tekus.API.Security;
 using Tekus.Application.Common;
 using Tekus.Application.DTOs;
-using Tekus.Application.UseCases;
 using Tekus.Application.UseCases.Providers;
+using Tekus.Application.UseCases.Services;
 
 
 namespace Tekus.API.Controllers
@@ -19,12 +19,19 @@ namespace Tekus.API.Controllers
         private readonly AddServiceToProviderUseCase _addServiceToProviderUseCase;
         private readonly UpdateProviderUseCase _updateProviderUseCase;
         private readonly DeleteProviderUseCase _deleteProviderUseCase;
+        private readonly UpdateServiceUseCase _updateServiceUseCase;
+        private readonly DeleteServiceUseCase _deleteServiceUseCase;
+        private readonly ListServicesByProviderPagedUseCase _listServicesByProviderPagedUseCase;
+
         public ProvidersController(
             CreateProviderUseCase createProviderUseCase,
             ListProvidersUseCase listProvidersUseCase,
             AddServiceToProviderUseCase addServiceToProviderUseCase,
             UpdateProviderUseCase updateProviderUseCase,
-            DeleteProviderUseCase deleteProviderUseCase
+            DeleteProviderUseCase deleteProviderUseCase,
+            UpdateServiceUseCase updateServiceUseCase,
+            DeleteServiceUseCase deleteServiceUseCase,
+            ListServicesByProviderPagedUseCase listServicesByProviderPagedUseCase
             )
             
         {
@@ -33,6 +40,11 @@ namespace Tekus.API.Controllers
             _addServiceToProviderUseCase = addServiceToProviderUseCase;
             _updateProviderUseCase = updateProviderUseCase;
             _deleteProviderUseCase = deleteProviderUseCase;
+            _updateServiceUseCase = updateServiceUseCase;
+            _deleteServiceUseCase = deleteServiceUseCase;
+            _listServicesByProviderPagedUseCase = listServicesByProviderPagedUseCase;
+
+
         }
 
         [HttpPost]
@@ -73,6 +85,38 @@ namespace Tekus.API.Controllers
             await _deleteProviderUseCase.ExecuteAsync(id);
             return NoContent();
         }
+        //Endpoints de servicios por proveedor
+  
 
+        [HttpPut("{providerId:guid}/services/{serviceId:guid}")]
+        public async Task<IActionResult> UpdateService(
+        Guid providerId,
+        Guid serviceId,
+        UpdateServiceRequest request)
+        {
+            request.ProviderId = providerId;
+            request.ServiceId = serviceId;
+
+            await _updateServiceUseCase.ExecuteAsync(request);
+            return NoContent();
+        }
+
+        [HttpDelete("{providerId:guid}/services/{serviceId:guid}")]
+        public async Task<IActionResult> DeleteService(Guid providerId, Guid serviceId)
+        {
+            await _deleteServiceUseCase.ExecuteAsync(providerId, serviceId);
+            return NoContent();
+        }
+        
+        [HttpGet("{providerId:guid}/services")]
+        public async Task<IActionResult> GetServices(
+        Guid providerId,
+        [FromQuery] PagedRequest request)
+        {
+            var result =
+                await _listServicesByProviderPagedUseCase.ExecuteAsync(providerId, request);
+
+            return Ok(result);
+        }
     }
 }

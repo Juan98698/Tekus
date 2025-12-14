@@ -60,8 +60,14 @@ namespace Tekus.Domain.Entities
             _Countries.Remove(Country);
         }
 
-      
-                
+        public void Update(string name, decimal hourValueUsd)
+        {
+            SetName(name);
+            SetHourValueUsd(hourValueUsd);
+        }
+
+
+
 
 
 

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tekus.Application.UseCases;
 using Tekus.Application.UseCases.Providers;
+using Tekus.Application.UseCases.Services;
 
 namespace Tekus.Application.DependencyInjection
 {
@@ -19,6 +19,12 @@ namespace Tekus.Application.DependencyInjection
             services.AddScoped<UpdateProviderUseCase>();
             services.AddScoped<UpdateProviderUseCase>();
             services.AddScoped<DeleteProviderUseCase>();
+            services.AddScoped<UpdateServiceUseCase>();
+            services.AddScoped<DeleteServiceUseCase>();
+            services.AddScoped<ListServicesByProviderPagedUseCase>();
+
+
+
 
             return services;
         }

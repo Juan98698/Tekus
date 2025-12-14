@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Tekus.Application.Interfaces.Repositories;
 using Tekus.Domain.Exceptions;
 
-namespace Tekus.Application.UseCases
+namespace Tekus.Application.UseCases.Providers
 {
     public class DeleteProviderUseCase
     {

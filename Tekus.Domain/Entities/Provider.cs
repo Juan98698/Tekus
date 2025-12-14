@@ -109,6 +109,13 @@ namespace Tekus.Domain.Entities
             foreach (var field in fields)
                 _customFields[field.Key] = field.Value;
         }
+        public void RemoveService(Guid serviceId)
+        {
+            var service = _services.FirstOrDefault(s => s.Id == serviceId)
+                ?? throw new NotFoundException("Service");
+
+            _services.Remove(service);
+        }
 
     }
 
