@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -18,10 +19,10 @@ namespace Tekus.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Provider> builder)
         {
-            // PK (UUID as string)
+
             builder.HasKey(p => p.Id);
+
             builder.Property(p => p.Id)
-                   .HasMaxLength(32) // Guid "N"
                    .IsRequired();
 
             builder.Property(p => p.Nit)
@@ -41,12 +42,25 @@ namespace Tekus.Infrastructure.Persistence.Configurations
             new ValueConverter<Dictionary<string, string>, string>(
            v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
            v => JsonSerializer.Deserialize<Dictionary<string, string>>(v, (JsonSerializerOptions?)null)!
-       );
+            );
 
-            builder.Property<Dictionary<string, string>>("_customFields")
-                .HasColumnName("CustomFields")
-                .HasConversion(customFieldsConverter)
-                .HasColumnType("nvarchar(max)");
+            var customFieldsComparer =
+            new ValueComparer<Dictionary<string, string>>(
+            (d1, d2) => d1!.SequenceEqual(d2!),
+             d => d.Aggregate(0, (a, v) => HashCode.Combine(a, v.Key, v.Value)),
+             d => d.ToDictionary(e => e.Key, e => e.Value)
+             );
+           
+            
+            var customFieldsProperty = builder
+            .Property<Dictionary<string, string>>("_customFields")
+            .HasColumnName("CustomFields")
+            .HasConversion(customFieldsConverter)
+            .HasColumnType("nvarchar(max)");
+
+            customFieldsProperty.Metadata
+                .SetValueComparer(customFieldsComparer);
+
 
 
             builder.HasMany(p => p.Services)

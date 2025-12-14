@@ -11,10 +11,10 @@ namespace Tekus.Application.Interfaces.Repositories
     public interface IProviderRepository
     {
         Task AddAsync(Provider provider);
-        Task<Provider> GetByIdAsync(string id);
+        Task<Provider> GetByIdAsync(Guid id);
+        Task<bool> ExistsAsync(Guid id);
         Task<Provider> GetByNitAsync(string nit);
-        Task UpdateAsync(Provider provider);
-        Task<bool> ExistsAsync(string id);
+        Task UpdateAsync(Provider provider);    
         Task<PagedResult<Provider>> GetPagedAsync(PagedRequest request);
 
     }

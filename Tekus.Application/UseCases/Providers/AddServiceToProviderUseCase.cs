@@ -12,27 +12,25 @@ namespace Tekus.Application.UseCases.Providers
 {
     public class AddServiceToProviderUseCase
     {
-        private readonly IProviderRepository _providerRepository;
+        private readonly IProviderRepository _repository;
 
-        public AddServiceToProviderUseCase(IProviderRepository providerRepository)
+        public AddServiceToProviderUseCase(IProviderRepository repository)
         {
-            _providerRepository = providerRepository;
+            _repository = repository;
         }
 
         public async Task ExecuteAsync(AddServiceRequest request)
         {
-            var provider = await _providerRepository.GetByIdAsync(request.ProviderId);
+            var provider = await _repository.GetByIdAsync(request.ProviderId);
 
             if (provider == null)
-                throw new NotFoundException("Proveedor");
-            var service = new Service(
-                request.Name,
-                request.HourValueUsd
-            );
+                throw new NotFoundException("Provider");
+
+            var service = new Service(request.Name, request.HourValueUsd);
 
             provider.AddService(service);
 
-            await _providerRepository.UpdateAsync(provider);
+            await _repository.UpdateAsync(provider);
         }
     }
 }

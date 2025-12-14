@@ -1,21 +1,44 @@
+using Microsoft.AspNetCore.Authentication;
+using Tekus.API.Middlewares;
+using Tekus.Application;
+using Tekus.Infrastructure.DependencyInjection;
+using Tekus.API.Security;
+using Tekus.Application.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Controllers
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Application & Infrastructure
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Simple Authentication (fake user)
+builder.Services.AddAuthentication("Default")
+    .AddScheme<AuthenticationSchemeOptions, SimpleAuthHandler>(
+        "Default", null);
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middlewares
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

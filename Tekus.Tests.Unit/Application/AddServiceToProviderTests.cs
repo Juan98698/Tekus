@@ -42,19 +42,7 @@ namespace Tekus.Tests.Unit.Application
             Assert.Single(provider.Services);
         }
 
-            private readonly List<Service> _services = new();
-              public IReadOnlyCollection<Service> Services => _services.AsReadOnly();
-
-            private void AddService(Service service)
-            {
-            if (service == null)
-                throw new RequiredFieldException("servicio");
-
-            if (_services.Any(s => s.Name == service.Name))
-                throw new DuplicateEntityException("service");
-
-            _services.Add(service);
-            }
+            
 
 
     }

@@ -28,10 +28,12 @@ namespace Tekus.Infrastructure.Persistence
 
         public async Task UpdateAsync(Provider provider)
         {
+            _context.Providers.Update(provider);
+
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Provider?> GetByIdAsync(string id)
+        public async Task<Provider?> GetByIdAsync(Guid id)
         {
             return await _context.Providers
                 .Include(p => p.Services)
@@ -44,7 +46,7 @@ namespace Tekus.Infrastructure.Persistence
                 .FirstOrDefaultAsync(p => p.Nit == nit);
         }
 
-        public async Task<bool> ExistsAsync(string id)
+        public async Task<bool> ExistsAsync(Guid id)
         {
             return await _context.Providers.AnyAsync(p => p.Id == id);
         }

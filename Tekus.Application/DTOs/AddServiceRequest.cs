@@ -8,7 +8,7 @@ namespace Tekus.Application.DTOs
 {
     public class AddServiceRequest
     {
-        public string ProviderId { get; set; }
+        public Guid ProviderId { get; set; }
         public string Name { get; set; } = default!;
         public decimal HourValueUsd { get; set; }
     }

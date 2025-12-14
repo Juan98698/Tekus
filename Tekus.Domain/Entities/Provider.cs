@@ -10,7 +10,7 @@ namespace Tekus.Domain.Entities
 {
     public class Provider
     {
-        public string Id { get; private set; } = default!;
+        public Guid Id { get; private set; } = default!;
 
         public string Nit { get; private set; } = default!;
         public string Name { get; private set; } = default!;
@@ -19,20 +19,22 @@ namespace Tekus.Domain.Entities
         private readonly Dictionary<string, string> _customFields = new();
         public IReadOnlyDictionary<string, string> CustomFields => _customFields;
 
+
+
         
         private Provider() { }
 
         
         public Provider(string nit, string name, string email)
         {
-            Id = Guid.NewGuid().ToString("N");
+            
 
             SetNit(nit);
             SetName(name);
             SetEmail(email);
         }
+    
 
-        
         private void SetNit(string nit)
         {
             if (string.IsNullOrWhiteSpace(nit))

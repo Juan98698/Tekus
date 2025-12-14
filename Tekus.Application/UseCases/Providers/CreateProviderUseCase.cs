@@ -12,34 +12,33 @@ namespace Tekus.Application.UseCases.Providers
 {
     public class CreateProviderUseCase
     {
-        private readonly IProviderRepository _providerRepository;
+        private readonly IProviderRepository _repository;
 
-        public CreateProviderUseCase(IProviderRepository providerRepository)
+        public CreateProviderUseCase(IProviderRepository repository)
         {
-            _providerRepository = providerRepository;
+            _repository = repository;
         }
 
         public async Task<ProviderResponse> ExecuteAsync(CreateProviderRequest request)
         {
-            var ExistingProvider = await _providerRepository.GetByNitAsync(request.Nit);
-            if (ExistingProvider != null)
-                throw new DuplicateEntityException("Proveedor");
+            var existing = await _repository.GetByNitAsync(request.Nit);
+            if (existing != null)
+                throw new DuplicateEntityException("Provider");
 
-            var provider = new Provider(
-                request.Nit,
-                request.Name,
-                request.Email
-            );
+            var provider = new Provider(request.Nit, request.Name, request.Email);
 
-            await _providerRepository.AddAsync(provider);
-
-            return new ProviderResponse
+            if (request.CustomFields != null)
             {
-                Id = provider.Id,
-                Nit = provider.Nit,
-                Name = provider.Name,
-                Email = provider.Email
-            };
+                foreach (var field in request.CustomFields)
+                {
+                    provider.AddCustomField(field.Key);
+                    provider.AssignCustomFieldValue(field.Key, field.Value);
+                }
+            }
+
+            await _repository.AddAsync(provider);
+
+            return ProviderResponse.From(provider);
         }
     }
 }

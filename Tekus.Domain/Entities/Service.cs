@@ -10,7 +10,7 @@ namespace Tekus.Domain.Entities
 {
     public class Service
     {
-        public int Id { get; private set; }
+        public Guid Id { get; private set; }
 
         public string Name { get; private set; }
         public decimal HourValueUsd { get; private set; }
