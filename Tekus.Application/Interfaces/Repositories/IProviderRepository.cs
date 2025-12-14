@@ -16,6 +16,8 @@ namespace Tekus.Application.Interfaces.Repositories
         Task<Provider> GetByNitAsync(string nit);
         Task UpdateAsync(Provider provider);    
         Task<PagedResult<Provider>> GetPagedAsync(PagedRequest request);
+        Task DeleteAsync(Provider provider);
+
 
     }
 }

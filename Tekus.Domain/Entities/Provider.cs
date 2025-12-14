@@ -96,6 +96,20 @@ namespace Tekus.Domain.Entities
             _services.Add(service);
         }
 
+        public void UpdateBasicInfo(string nit, string name, string email)
+        {
+            SetNit(nit);
+            SetName(name);
+            SetEmail(email);
+        }
+
+        public void ReplaceCustomFields(Dictionary<string, string> fields)
+        {
+            _customFields.Clear();
+            foreach (var field in fields)
+                _customFields[field.Key] = field.Value;
+        }
+
     }
 
 }

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tekus.Application.UseCases;
 using Tekus.Application.UseCases.Providers;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Tekus.Application.DependencyInjection
 {
@@ -15,6 +16,10 @@ namespace Tekus.Application.DependencyInjection
             services.AddScoped<CreateProviderUseCase>();
             services.AddScoped<ListProvidersUseCase>();
             services.AddScoped<AddServiceToProviderUseCase>();
+            services.AddScoped<UpdateProviderUseCase>();
+            services.AddScoped<UpdateProviderUseCase>();
+            services.AddScoped<DeleteProviderUseCase>();
+
             return services;
         }
     }

@@ -40,6 +40,12 @@ namespace Tekus.Infrastructure.Persistence
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task DeleteAsync(Provider provider)
+        {
+            _context.Providers.Remove(provider);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Provider?> GetByNitAsync(string nit)
         {
             return await _context.Providers
@@ -62,6 +68,7 @@ namespace Tekus.Infrastructure.Persistence
                     p.Name.Contains(request.Search) ||
                     p.Nit.Contains(request.Search));
             }
+
 
             
             if (!string.IsNullOrWhiteSpace(request.OrderBy))
