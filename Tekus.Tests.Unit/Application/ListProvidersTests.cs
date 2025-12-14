@@ -6,35 +6,35 @@ using System.Text;
 using System.Threading.Tasks;
 using Tekus.Application.Common;
 using Tekus.Application.Interfaces.Repositories;
-using Tekus.Application.UseCases.Proveedores;
+using Tekus.Application.UseCases.Providers;
 using Tekus.Domain.Entities;
 
 namespace Tekus.Tests.Unit.Application
 {
-    public class ListarProveedoresTests
+    public class ListProvidersTests
     {
         [Fact]
-        public async Task Debe_listar_proveedores_paginados()
+        public async Task must_list_paginated_providers()
         {
-            var proveedores = new List<Proveedor>
+            var providers = new List<Provider>
         {
-            new Proveedor("1", "A", "a@test.com"),
-            new Proveedor("2", "B", "b@test.com")
+            new Provider("1", "A", "a@test.com"),
+            new Provider("2", "B", "b@test.com")
         };
 
-            var paged = new PagedResult<Proveedor>
+            var paged = new PagedResult<Provider>
             {
                 Page = 1,
                 PageSize = 10,
                 TotalItems = 2,
-                Items = proveedores
+                Items = providers
             };
 
-            var repoMock = new Mock<IProveedorRepository>();
+            var repoMock = new Mock<IProviderRepository>();
             repoMock.Setup(r => r.GetPagedAsync(It.IsAny<PagedRequest>()))
                     .ReturnsAsync(paged);
 
-            var useCase = new ListarProveedoresUseCase(repoMock.Object);
+            var useCase = new ListProvidersUseCase(repoMock.Object);
 
             var result = await useCase.ExecuteAsync(new PagedRequest());
 

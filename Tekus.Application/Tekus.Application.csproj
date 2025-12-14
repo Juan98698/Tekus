@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +13,7 @@
   <ItemGroup>
     <Folder Include="Interfaces\Services\" />
     <Folder Include="Validators\" />
-    <Folder Include="UseCases\Servicios\" />
+    <Folder Include="UseCases\Services\" />
   </ItemGroup>
 
 </Project>

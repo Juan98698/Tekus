@@ -10,18 +10,18 @@ using Xunit;
 
 namespace Tekus.Tests.Unit.Domain
 {
-    public class ServicioTests
+    public class serviceTests
     {
         [Fact]
-        public void No_debe_permitir_agregar_paises_duplicados()
+        public void Do_not_allow_adding_duplicate_countries()
         {
             // Arrange
-            var servicio = new Servicio("Descarga espacial", 100);
-            servicio.AgregarPais(new Pais("CO", "Colombia"));
+            var service = new Service("Descarga espacial", 100);
+            service.AddCountry(new Country("CO", "Colombia"));
 
             // Act & Assert
             Assert.Throws<DuplicateEntityException>(() =>
-                servicio.AgregarPais(new Pais("CO", "Colombia"))
+                service.AddCountry(new Country("CO", "Colombia"))
             );
         }
     }

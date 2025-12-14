@@ -8,14 +8,14 @@ using Tekus.Application.Common;
 
 namespace Tekus.Application.Interfaces.Repositories
 {
-    public interface IProveedorRepository
+    public interface IProviderRepository
     {
-        Task AddAsync(Proveedor proveedor);
-        Task<Proveedor?> GetByIdAsync(int id);
-        Task<Proveedor?> GetByNitAsync(string nit);
-        Task UpdateAsync(Proveedor proveedor);
-        Task<bool> ExistsAsync(int id);
-        Task<PagedResult<Proveedor>> GetPagedAsync(PagedRequest request);
+        Task AddAsync(Provider provider);
+        Task<Provider> GetByIdAsync(string id);
+        Task<Provider> GetByNitAsync(string nit);
+        Task UpdateAsync(Provider provider);
+        Task<bool> ExistsAsync(string id);
+        Task<PagedResult<Provider>> GetPagedAsync(PagedRequest request);
 
     }
 }

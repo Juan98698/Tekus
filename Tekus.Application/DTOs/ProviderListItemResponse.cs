@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Tekus.Application.DTOs
 {
-    public class ProveedorResponse
+    public class ProviderListItemResponse
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Nit { get; set; } = default!;
-        public string Nombre { get; set; } = default!;
+        public string Name { get; set; } = default!;
         public string Email { get; set; } = default!;
     }
 }

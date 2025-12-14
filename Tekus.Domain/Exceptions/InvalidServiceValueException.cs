@@ -9,7 +9,7 @@ namespace Tekus.Domain.Exceptions
     public class InvalidServiceValueException : DomainException
     {
         public InvalidServiceValueException(decimal value)
-            : base($"El valor por hora '{value}' debe ser mayor a cero")
+            : base($"El value por hora '{value}' debe ser mayor a cero")
         {
         }
     }

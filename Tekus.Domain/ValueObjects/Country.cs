@@ -6,34 +6,34 @@ using System.Threading.Tasks;
 
 namespace Tekus.Domain.ValueObjects
 {
-    public class Pais
+    public class Country
     {
-        public string Codigo { get; }
-        public string Nombre { get; }
+        public string Code { get; }
+        public string Name { get; }
 
-        public Pais(string codigo, string nombre)
+        public Country(string code, string name)
         {
-            if (string.IsNullOrWhiteSpace(codigo))
+            if (string.IsNullOrWhiteSpace(code))
                 throw new ArgumentException("El código del país es obligatorio");
 
-            if (string.IsNullOrWhiteSpace(nombre))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("El nombre del país es obligatorio");
 
-            Codigo = codigo.Trim().ToUpper();
-            Nombre = nombre.Trim();
+            Code = code.Trim().ToUpper();
+            Name = name.Trim();
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is not Pais other)
+            if (obj is not Country other)
                 return false;
 
-            return Codigo == other.Codigo;
+            return Code == other.Code;
         }
 
         public override int GetHashCode()
         {
-            return Codigo.GetHashCode();
+            return Code.GetHashCode();
         }
 
         
