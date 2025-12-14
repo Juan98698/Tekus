@@ -55,6 +55,7 @@ namespace Tekus.Infrastructure.Persistence
         {
             var query = _context.Providers.AsQueryable();
 
+            
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 query = query.Where(p =>
@@ -62,8 +63,44 @@ namespace Tekus.Infrastructure.Persistence
                     p.Nit.Contains(request.Search));
             }
 
+            
+            if (!string.IsNullOrWhiteSpace(request.OrderBy))
+            {
+                switch (request.OrderBy.ToLower())
+                {
+                    case "name":
+                        query = request.OrderAsc
+                            ? query.OrderBy(p => p.Name)
+                            : query.OrderByDescending(p => p.Name);
+                        break;
+
+                    case "nit":
+                        query = request.OrderAsc
+                            ? query.OrderBy(p => p.Nit)
+                            : query.OrderByDescending(p => p.Nit);
+                        break;
+
+                    case "email":
+                        query = request.OrderAsc
+                            ? query.OrderBy(p => p.Email)
+                            : query.OrderByDescending(p => p.Email);
+                        break;
+
+                    default:
+                        query = query.OrderBy(p => p.Name);
+                        break;
+                }
+            }
+            else
+            {
+                
+                query = query.OrderBy(p => p.Name);
+            }
+
+            
             var total = await query.CountAsync();
 
+            
             var items = await query
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)

@@ -13,7 +13,8 @@ namespace Tekus.Application.DependencyInjection
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<CreateProviderUseCase>();
-            // agrega aquí otros UseCases cuando los crees
+            services.AddScoped<ListProvidersUseCase>();
+            services.AddScoped<AddServiceToProviderUseCase>();
             return services;
         }
     }

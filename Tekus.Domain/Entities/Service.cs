@@ -34,11 +34,12 @@ namespace Tekus.Domain.Entities
 
         private void SetHourValueUsd(decimal hourValueUsd)
         {
-            if (HourValueUsd <= 0)
+            if (hourValueUsd <= 0)
                 throw new InvalidServiceValueException(hourValueUsd);
 
             HourValueUsd = hourValueUsd;
         }
+
 
         public void Actualizar(string name, decimal HourValueUsd)
         {

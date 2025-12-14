@@ -26,9 +26,11 @@ builder.Services.AddAuthentication("Default")
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+app.UseDeveloperExceptionPage();
+
 
 // Middlewares
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+//app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
