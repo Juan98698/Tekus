@@ -22,6 +22,8 @@ namespace Tekus.API.Controllers
         private readonly UpdateServiceUseCase _updateServiceUseCase;
         private readonly DeleteServiceUseCase _deleteServiceUseCase;
         private readonly ListServicesByProviderPagedUseCase _listServicesByProviderPagedUseCase;
+        private readonly AssignCountriesToServiceUseCase _assignCountriesUseCase;
+
 
         public ProvidersController(
             CreateProviderUseCase createProviderUseCase,
@@ -31,7 +33,8 @@ namespace Tekus.API.Controllers
             DeleteProviderUseCase deleteProviderUseCase,
             UpdateServiceUseCase updateServiceUseCase,
             DeleteServiceUseCase deleteServiceUseCase,
-            ListServicesByProviderPagedUseCase listServicesByProviderPagedUseCase
+            ListServicesByProviderPagedUseCase listServicesByProviderPagedUseCase,
+            AssignCountriesToServiceUseCase assignCountriesUseCase
             )
             
         {
@@ -43,6 +46,8 @@ namespace Tekus.API.Controllers
             _updateServiceUseCase = updateServiceUseCase;
             _deleteServiceUseCase = deleteServiceUseCase;
             _listServicesByProviderPagedUseCase = listServicesByProviderPagedUseCase;
+            _assignCountriesUseCase = assignCountriesUseCase;
+
 
 
         }
@@ -117,6 +122,24 @@ namespace Tekus.API.Controllers
                 await _listServicesByProviderPagedUseCase.ExecuteAsync(providerId, request);
 
             return Ok(result);
+        }
+
+        //Endpints con Country
+
+        [HttpPost("{providerId:guid}/services/{serviceId:guid}/countries")]
+        public async Task<IActionResult> AssignCountries(
+        Guid providerId,
+        Guid serviceId,
+        [FromBody] List<string> countryCodes)
+        {
+            await _assignCountriesUseCase.ExecuteAsync(new AssignCountriesToServiceRequest
+            {
+                ProviderId = providerId,
+                ServiceId = serviceId,
+                CountryCodes = countryCodes
+            });
+
+            return NoContent();
         }
     }
 }

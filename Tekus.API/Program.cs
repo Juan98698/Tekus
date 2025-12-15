@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authentication;
 using Tekus.API.Middlewares;
-using Tekus.Application;
-using Tekus.Infrastructure.DependencyInjection;
 using Tekus.API.Security;
+using Tekus.Application;
 using Tekus.Application.DependencyInjection;
+using Tekus.Application.Interfaces.Services;
+using Tekus.Infrastructure.DependencyInjection;
+using Tekus.Infrastructure.ExternalServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,9 @@ builder.Services.AddSwaggerGen();
 // Application & Infrastructure
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// ?? External Services (Countries API)
+builder.Services.AddHttpClient<ICountryProvider, RestCountriesProvider>();
 
 // Simple Authentication (fake user)
 builder.Services.AddAuthentication("Default")

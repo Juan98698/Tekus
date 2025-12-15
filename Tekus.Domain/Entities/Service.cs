@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Tekus.Domain.Exceptions;
 using Tekus.Domain.ValueObjects;
 
+
 namespace Tekus.Domain.Entities
 {
     public class Service
@@ -15,8 +16,8 @@ namespace Tekus.Domain.Entities
         public string Name { get; private set; }
         public decimal HourValueUsd { get; private set; }
 
-        private readonly List<Country> _Countries = new();
-        public IReadOnlyCollection<Country> Countries => _Countries.AsReadOnly();
+        private readonly List<Country> _countries = new();
+        public IReadOnlyCollection<Country> Countries => _countries.AsReadOnly();
 
         public Service(string name, decimal HourValueUsd)
         {
@@ -41,29 +42,19 @@ namespace Tekus.Domain.Entities
         }
 
 
-        public void Actualizar(string name, decimal HourValueUsd)
-        {
-            SetName(name);
-            SetHourValueUsd(HourValueUsd);
-        }
-
-        public void AddCountry(Country Country)
-        {
-            if (_Countries.Any(p => p.Equals(Country)))
-                throw new DuplicateEntityException("País");
-
-            _Countries.Add(Country);
-        }
-
-        public void RemoverCountry(Country Country)
-        {
-            _Countries.Remove(Country);
-        }
-
         public void Update(string name, decimal hourValueUsd)
         {
             SetName(name);
             SetHourValueUsd(hourValueUsd);
+        }
+
+
+        public void AddCountry(Country country)
+        {
+            if (_countries.Any(c => c.Code == country.Code))
+                throw new DuplicateEntityException("Country");
+
+            _countries.Add(country);
         }
 
 

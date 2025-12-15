@@ -14,6 +14,7 @@ namespace Tekus.Infrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Service> builder)
         {
             builder.HasKey(s => s.Id);
+
             builder.Property(s => s.Id)
                    .HasMaxLength(32)
                    .IsRequired();
@@ -25,11 +26,22 @@ namespace Tekus.Infrastructure.Persistence.Configurations
             builder.Property(s => s.HourValueUsd)
                    .HasPrecision(18, 2);
 
-            // Value Object Country as owned collection
-            builder.OwnsMany(s => s.Countries, c =>
+            // Owned Value Object: Countries
+            builder.OwnsMany(s => s.Countries, cb =>
             {
-                c.Property(x => x.Code).HasMaxLength(10);
-                c.Property(x => x.Name).HasMaxLength(100);
+                cb.ToTable("ServiceCountries");
+
+                cb.WithOwner().HasForeignKey("ServiceId");
+
+                cb.Property(c => c.Code)
+                  .HasMaxLength(10)
+                  .IsRequired();
+
+                cb.Property(c => c.Name)
+                  .HasMaxLength(100)
+                  .IsRequired();
+
+                cb.HasKey("ServiceId", "Code");
             });
         }
     }

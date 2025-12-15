@@ -90,23 +90,18 @@ namespace Tekus.Infrastructure.Migrations
                             b1.Property<Guid>("ServiceId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
                             b1.Property<string>("Code")
                                 .HasMaxLength(10)
                                 .HasColumnType("nvarchar(10)");
 
                             b1.Property<string>("Name")
+                                .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("nvarchar(100)");
 
-                            b1.HasKey("ServiceId", "Id");
+                            b1.HasKey("ServiceId", "Code");
 
-                            b1.ToTable("Country");
+                            b1.ToTable("ServiceCountries", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ServiceId");

@@ -47,20 +47,18 @@ namespace Tekus.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Country",
+                name: "ServiceCountries",
                 columns: table => new
                 {
+                    Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     ServiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Country", x => new { x.ServiceId, x.Id });
+                    table.PrimaryKey("PK_ServiceCountries", x => new { x.ServiceId, x.Code });
                     table.ForeignKey(
-                        name: "FK_Country_Service_ServiceId",
+                        name: "FK_ServiceCountries_Service_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Service",
                         principalColumn: "Id",
@@ -77,7 +75,7 @@ namespace Tekus.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Country");
+                name: "ServiceCountries");
 
             migrationBuilder.DropTable(
                 name: "Service");

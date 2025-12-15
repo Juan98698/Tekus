@@ -121,5 +121,13 @@ namespace Tekus.Infrastructure.Persistence
                 Items = items
             };
         }
+
+        public async Task<List<Provider>> GetAllAsync()
+        {
+            return await _context.Providers
+                .Include(p => p.Services)
+                    .ThenInclude(s => s.Countries)
+                .ToListAsync();
+        }
     }
 }
