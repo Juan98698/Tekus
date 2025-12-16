@@ -1,0 +1,89 @@
+﻿@page "/providers"
+@inject ProviderApiService Api
+@inject IDialogService DialogService
+@using MudBlazor
+@using Tekus.Frontend.Models
+@using Tekus.Frontend.Services
+
+<MudText Typo="Typo.h4">Providers</MudText>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary"
+           OnClick="OpenCreateDialog">
+    Create Provider
+</MudButton>
+
+
+
+
+<MudTable Items="_providers">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>NIT</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.Nit</MudTd>
+        <MudTd>@context.Email</MudTd>
+
+        <MudTd>
+            <MudButton Size="Size.Small"
+                       Color="Color.Secondary"
+                       OnClick="() => OpenAddServiceDialog(context.Id)">
+                Add Service
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+
+@code {
+    private List<ProviderDto> _providers = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProviders();
+    }
+
+
+    private async Task OpenCreateDialog()
+    {
+        var dialog = await DialogService.ShowAsync<CreateProviderDialog>(
+            "Create Provider");
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await LoadProviders();
+        }
+    }
+    private async Task LoadProviders()
+    {
+        var result = await Api.GetProvidersAsync();
+        _providers = result.Items;
+    }
+
+    private async Task OpenAddServiceDialog(Guid providerId)
+    {
+        var parameters = new DialogParameters
+        {
+            ["ProviderId"] = providerId
+        };
+
+        var dialog = await DialogService.ShowAsync<AddServiceDialog>(
+            "Add Service",
+            parameters);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await LoadProviders();
+        }
+    }
+
+}
+

@@ -1,0 +1,48 @@
+﻿@page "/summary"
+@inject SummaryApiService Api
+@using MudBlazor
+@using Tekus.Frontend.Services
+@using Tekus.Application.DTOs.Summary;
+
+<MudText Typo="Typo.h4">Dashboard</MudText>
+
+<MudPaper Class="pa-4">
+
+    <MudText Typo="Typo.h6">Services by Country</MudText>
+
+    <MudTable Items="_model.ServicesByCountry">
+        <HeaderContent>
+            <MudTh>Country</MudTh>
+            <MudTh>Services</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.CountryName</MudTd>
+            <MudTd>@context.ServicesCount</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    <MudDivider Class="my-4" />
+
+    <MudText Typo="Typo.h6">Providers by Country</MudText>
+
+    <MudTable Items="_model.ProvidersByCountry">
+        <HeaderContent>
+            <MudTh>Country</MudTh>
+            <MudTh>Providers</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.CountryName</MudTd>
+            <MudTd>@context.ProvidersCount</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+</MudPaper>
+
+@code {
+    private SummaryResponse _model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _model = await Api.GetSummaryAsync();
+    }
+}

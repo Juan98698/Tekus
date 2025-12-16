@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Tekus.Application.UseCases.Providers;
 using Tekus.Application.UseCases.Reports;
 using Tekus.Application.UseCases.Services;
+using Tekus.Application.UseCases.Summary;
 
 namespace Tekus.Application.DependencyInjection
 {
@@ -25,6 +26,7 @@ namespace Tekus.Application.DependencyInjection
             services.AddScoped<ListServicesByProviderPagedUseCase>();
             services.AddScoped<AssignCountriesToServiceUseCase>();
             services.AddScoped<GetSummaryReportUseCase>();
+            services.AddScoped<GetSummaryUseCase>();
 
             return services;
         }

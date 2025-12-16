@@ -1,0 +1,73 @@
+﻿@using MudBlazor
+@inject CountryApiService CountryApi
+@inject ProviderApiService ProviderApi
+@using Tekus.Frontend.Models
+@using Tekus.Frontend.Services
+
+<MudDialog>
+    <DialogContent>
+
+        <MudText Typo="Typo.h6">Add Service</MudText>
+
+        <MudTextField Label="Name"
+                      @bind-Value="_model.Name"
+                      Required />
+
+        <MudNumericField T="decimal"
+                         Label="Hour Value (USD)"
+                         @bind-Value="_model.HourValueUsd"
+                         Required />
+
+        <MudSelect T="string"
+                   Label="Countries"
+                   MultiSelection="true"
+                   @bind-SelectedValue="_selectedCountries">
+
+            @foreach (var c in _countries)
+            {
+                <MudSelectItem Value="@c.Code">
+                    @c.Name (@c.Code)
+                </MudSelectItem>
+            }
+        </MudSelect>
+
+
+     
+
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public Guid ProviderId { get; set; }
+
+    private AddServiceRequest _model = new();
+    private List<CountryDto> _countries = new();
+    private HashSet<string> _selectedCountries = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _countries = await CountryApi.GetCountriesAsync();
+    }
+  
+    private async Task Submit()
+    {
+        _model.CountryCodes = _selectedCountries.ToList();
+
+        await ProviderApi.AddServiceAsync(ProviderId, _model);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

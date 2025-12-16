@@ -1,0 +1,35 @@
+﻿@using MudBlazor
+@using Tekus.Frontend.Models
+@using Tekus.Frontend.Services
+@inject ProviderApiService Api
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField Label="NIT" @bind-Value="_model.Nit" />
+        <MudTextField Label="Name" @bind-Value="_model.Name" />
+        <MudTextField Label="Email" @bind-Value="_model.Email" />
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Submit" Color="Color.Primary">Save</MudButton>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance MudDialog { get; set; } = default!;
+
+    private CreateProviderRequest _model = new();
+
+    private async Task Submit()
+    {
+        await Api.CreateProviderAsync(_model);
+        MudDialog.Close();
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

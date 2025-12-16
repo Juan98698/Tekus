@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36705.20 d17.14
+VisualStudioVersion = 17.14.36705.20
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Domain", "Tekus.Domain\Tekus.Domain.csproj", "{8D7BA1C1-8A3B-447B-86AD-F13F8BADAD24}"
 EndProject
@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Tests.Unit", "Tekus.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Tests.Integration", "Tekus.Tests.Integration\Tekus.Tests.Integration.csproj", "{51F02A86-18DF-48FD-9EEE-9AA8087E60A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Frontend", "Tekus.Frontend\Tekus.Frontend.csproj", "{930BC5F1-F811-43D2-8788-0E95682197AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tekus.Frontend", "Tekus.Frontend\Tekus.Frontend.csproj", "{ABA0B5C0-DFBD-46D1-A802-4269CCB91A39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{51F02A86-18DF-48FD-9EEE-9AA8087E60A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51F02A86-18DF-48FD-9EEE-9AA8087E60A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51F02A86-18DF-48FD-9EEE-9AA8087E60A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{930BC5F1-F811-43D2-8788-0E95682197AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{930BC5F1-F811-43D2-8788-0E95682197AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{930BC5F1-F811-43D2-8788-0E95682197AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{930BC5F1-F811-43D2-8788-0E95682197AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABA0B5C0-DFBD-46D1-A802-4269CCB91A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABA0B5C0-DFBD-46D1-A802-4269CCB91A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABA0B5C0-DFBD-46D1-A802-4269CCB91A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABA0B5C0-DFBD-46D1-A802-4269CCB91A39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,7 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// ?? External Services (Countries API)
+//  External Services (Countries API)
 builder.Services.AddHttpClient<ICountryProvider, RestCountriesProvider>();
 
 // Simple Authentication (fake user)
