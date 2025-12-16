@@ -17,19 +17,23 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter]
-    public IMudDialogInstance MudDialog { get; set; } = default!;
-
+    [CascadingParameter] public IMudDialogInstance MudDialog { get; set; } = default!;
     private CreateProviderRequest _model = new();
 
     private async Task Submit()
     {
-        await Api.CreateProviderAsync(_model);
-        MudDialog.Close();
+        try
+        {
+            await Api.CreateProviderAsync(_model);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+            // opcional: Snackbar
+        }
     }
 
-    private void Cancel()
-    {
-        MudDialog.Cancel();
-    }
+    private void Cancel() => MudDialog.Cancel();
 }
+

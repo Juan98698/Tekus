@@ -11,7 +11,7 @@ namespace Tekus.API.Controllers
 {
     [ApiController]
     [Route("api/providers")]
-    //[Authorize]
+
     public class ProvidersController : ControllerBase
     {
         private readonly CreateProviderUseCase _createProviderUseCase;
@@ -51,14 +51,14 @@ namespace Tekus.API.Controllers
 
 
         }
-
+        
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProviderRequest request)
         {
             var result = await _createProviderUseCase.ExecuteAsync(request);
             return CreatedAtAction(nameof(Create), new { id = result.Id }, result);
         }
-
+       
         [HttpGet]
         public async Task<IActionResult> GetProviders([FromQuery] PagedRequest request)
         {

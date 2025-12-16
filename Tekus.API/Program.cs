@@ -8,6 +8,15 @@ using Tekus.Infrastructure.DependencyInjection;
 using Tekus.Infrastructure.ExternalServices;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowDev", policy =>
+    {
+        policy.WithOrigins("https://localhost:7200") 
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 // Controllers
 builder.Services.AddControllers();
@@ -31,11 +40,13 @@ builder.Services.AddAuthentication("Default")
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+app.UseCors("AllowDev");
+
 app.UseDeveloperExceptionPage();
 
 
-// Middlewares
-//app.UseMiddleware<ExceptionHandlingMiddleware>();
+ //Middlewares
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

@@ -19,17 +19,17 @@ namespace Tekus.API.Middlewares
             {
                 await _next(context);
             }
-            catch (NotFoundException ex) // 👈 MÁS ESPECÍFICA PRIMERO
+            catch (NotFoundException ex) 
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 await WriteError(context, ex.Message);
             }
-            catch (DomainException ex) // 👈 MÁS GENERAL DESPUÉS
+            catch (DomainException ex) 
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 await WriteError(context, ex.Message);
             }
-            catch (Exception) // 👈 ÚLTIMO RECURSO
+            catch (Exception) 
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 await WriteError(context, "Unexpected error");
