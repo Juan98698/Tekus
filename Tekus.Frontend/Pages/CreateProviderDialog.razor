@@ -8,6 +8,33 @@
         <MudTextField Label="NIT" @bind-Value="_model.Nit" />
         <MudTextField Label="Name" @bind-Value="_model.Name" />
         <MudTextField Label="Email" @bind-Value="_model.Email" />
+        <MudDivider Class="my-3" />
+
+        <MudText Typo="Typo.subtitle1">Campos personalizados</MudText>
+
+        @foreach (var field in _customFields)
+        {
+            <MudGrid Class="mb-2">
+                <MudItem xs="5">
+                    <MudTextField Label="Nombre" @bind-Value="field.Key" />
+                </MudItem>
+                <MudItem xs="5">
+                    <MudTextField Label="Valor" @bind-Value="field.Value" />
+                </MudItem>
+                <MudItem xs="2" Class="d-flex align-center">
+                    <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                   Color="Color.Error"
+                                   OnClick="@(() => RemoveField(field))" />
+                </MudItem>
+            </MudGrid>
+        }
+
+        <MudButton Variant="Variant.Outlined"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="AddField">
+            Agregar campo
+        </MudButton>
+
     </DialogContent>
 
     <DialogActions>
@@ -19,20 +46,30 @@
 @code {
     [CascadingParameter] public IMudDialogInstance MudDialog { get; set; } = default!;
     private CreateProviderRequest _model = new();
+    private List<CustomFieldDto> _customFields = new();
+    private void AddField()
+    {
+        _customFields.Add(new CustomFieldDto());
+    }
+
+    private void RemoveField(CustomFieldDto field)
+    {
+        _customFields.Remove(field);
+    }
+
 
     private async Task Submit()
     {
-        try
+        foreach (var field in _customFields)
         {
-            await Api.CreateProviderAsync(_model);
-            MudDialog.Close(DialogResult.Ok(true));
+            if (!string.IsNullOrWhiteSpace(field.Key))
+                _model.CustomFields[field.Key] = field.Value;
         }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine(ex.Message);
-            // opcional: Snackbar
-        }
+
+        await Api.CreateProviderAsync(_model);
+        MudDialog.Close(DialogResult.Ok(true));
     }
+
 
     private void Cancel() => MudDialog.Cancel();
 }

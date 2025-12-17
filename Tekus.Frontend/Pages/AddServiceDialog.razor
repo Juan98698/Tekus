@@ -7,38 +7,55 @@
 <MudDialog>
     <DialogContent>
 
-        <MudText Typo="Typo.h6">Add Service</MudText>
+        <MudText Typo="Typo.h6">Nuevo servicio</MudText>
 
-        <MudTextField Label="Name"
+        <!-- Nombre -->
+        <MudTextField Label="Nombre del servicio"
                       @bind-Value="_model.Name"
-                      Required />
+                      Required="true" />
 
+        <!-- Valor por hora -->
         <MudNumericField T="decimal"
-                         Label="Hour Value (USD)"
+                         Label="Valor hora (USD)"
                          @bind-Value="_model.HourValueUsd"
-                         Required />
+                         Required="true"
+                         Min="0" />
 
-        <MudSelect T="string"
-                   Label="Countries"
-                   MultiSelection="true"
-                   @bind-SelectedValue="_selectedCountries">
+        <!-- Países -->
+        @if (_availableCountries.Count == 0)
+        {
+            <MudText Color="Color.Warning">
+                Cargando países...
+            </MudText>
+        }
+        else
+        {
+            <MudSelect T="string"
+                       Label="Países"
+                       MultiSelection="true"
+                       SelectedValues="_model.CountryCodes"
+                       SelectedValuesChanged="@(values => _model.CountryCodes = values.ToHashSet())">
 
-            @foreach (var c in _countries)
-            {
-                <MudSelectItem Value="@c.Code">
-                    @c.Name (@c.Code)
-                </MudSelectItem>
-            }
-        </MudSelect>
+                @foreach (var country in _availableCountries)
+                {
+                    <MudSelectItem Value="@country.Code">
+                        @country.Name
+                    </MudSelectItem>
+                }
 
-
-     
+            </MudSelect>
+        }
 
     </DialogContent>
 
     <DialogActions>
-        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">
+            Guardar
+        </MudButton>
+
+        <MudButton OnClick="Cancel">
+            Cancelar
+        </MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -49,21 +66,41 @@
     [Parameter]
     public Guid ProviderId { get; set; }
 
-    private AddServiceRequest _model = new();
-    private List<CountryDto> _countries = new();
-    private HashSet<string> _selectedCountries = new();
+    private AddServiceRequest _model = new()
+    {
+        CountryCodes = new HashSet<string>()
+    };
+
+    private List<CountryDto> _availableCountries = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _countries = await CountryApi.GetCountriesAsync();
+        try
+        {
+            _availableCountries = await CountryApi.GetCountriesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine("Error cargando países:");
+            Console.Error.WriteLine(ex.Message);
+
+            _availableCountries = new List<CountryDto>();
+        }
     }
-  
+    
+
     private async Task Submit()
     {
-        _model.CountryCodes = _selectedCountries.ToList();
+        try
+        {
+            await ProviderApi.AddServiceAsync(ProviderId, _model);
 
-        await ProviderApi.AddServiceAsync(ProviderId, _model);
-        MudDialog.Close(DialogResult.Ok(true));
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+        }
     }
 
     private void Cancel()

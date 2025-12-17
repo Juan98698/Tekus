@@ -10,38 +10,73 @@
     Create Provider
 </MudButton>
 
-<MudTable Items="_providers">
+<MudTable Items="_providers"
+          powsPerPage="_pageSize"
+          page="_page - 1"
+          pageChanged="OnPageChanged">
+
     <HeaderContent>
-        <MudTh>Name</MudTh>
+        <MudTh>Nombre</MudTh>
         <MudTh>NIT</MudTh>
         <MudTh>Email</MudTh>
+        <MudTh>Acciones</MudTh>
     </HeaderContent>
+
     <RowTemplate>
         <MudTd>@context.Name</MudTd>
         <MudTd>@context.Nit</MudTd>
         <MudTd>@context.Email</MudTd>
+        <MudTd>
+            <MudButton Size="Size.Small"
+                       OnClick="@(() => OpenAddServiceDialog(context.Id))">
+                Servicios
+            </MudButton>
+        </MudTd>
     </RowTemplate>
 </MudTable>
 
 @code {
     private List<ProviderDto> _providers = [];
+    private int _page = 1;
+    private int _pageSize = 10;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadProviders();
     }
 
-
     private async Task LoadProviders()
     {
-        var result = await Api.GetProvidersAsync();
+        var result = await Api.GetProvidersAsync(_page, _pageSize);
         _providers = result.Items;
     }
 
+    private async Task OnPageChanged(int page)
+    {
+        _page = page + 1;
+        await LoadProviders();
+    }
 
     private async Task OpenCreateDialog()
     {
         var dialog = await DialogService.ShowAsync<CreateProviderDialog>("Create Provider");
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            await LoadProviders();
+    }
+
+    private async Task OpenAddServiceDialog(Guid providerId)
+    {
+        var parameters = new DialogParameters
+        {
+            ["ProviderId"] = providerId
+        };
+
+        var dialog = await DialogService.ShowAsync<AddServiceDialog>(
+            "Add Service",
+            parameters);
+
         var result = await dialog.Result;
 
         if (!result.Canceled)
