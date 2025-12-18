@@ -11,5 +11,7 @@ namespace Tekus.Application.DTOs
         public Guid Id { get; set; }
         public string Name { get; set; } = default!;
         public decimal HourValueUsd { get; set; }
+
+        public List<CountryResponse> Countries { get; set; } = new();
     }
 }

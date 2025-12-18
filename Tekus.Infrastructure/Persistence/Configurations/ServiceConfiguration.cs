@@ -16,8 +16,7 @@ namespace Tekus.Infrastructure.Persistence.Configurations
             builder.HasKey(s => s.Id);
 
             builder.Property(s => s.Id)
-                   .HasMaxLength(32)
-                   .IsRequired();
+            .ValueGeneratedOnAdd();
 
             builder.Property(s => s.Name)
                    .IsRequired()

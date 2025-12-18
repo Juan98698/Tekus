@@ -8,29 +8,45 @@ using Tekus.Application.Interfaces.Repositories;
 using Tekus.Domain.Entities;
 using Tekus.Domain.Exceptions;
 
+
 namespace Tekus.Application.UseCases.Providers
 {
     public class AddServiceToProviderUseCase
     {
-        private readonly IProviderRepository _repository;
+        private readonly IProviderRepository _providerRepository;
 
-        public AddServiceToProviderUseCase(IProviderRepository repository)
+        public AddServiceToProviderUseCase(IProviderRepository providerRepository)
         {
-            _repository = repository;
+            _providerRepository = providerRepository;
         }
 
-        public async Task ExecuteAsync(AddServiceRequest request)
+        public async Task<ServiceListItemResponse> ExecuteAsync(AddServiceRequest request)
         {
-            var provider = await _repository.GetByIdAsync(request.ProviderId);
+            
+            var provider = await _providerRepository.GetByIdAsync(request.ProviderId);
 
-            if (provider == null)
-                throw new NotFoundException("Provider");
+            if (provider is null)
+                throw new Exception("Provider not found");
 
-            var service = new Service(request.Name, request.HourValueUsd);
+            
+            var service = Service.Create(
+                request.Name,
+                request.HourValueUsd
+            );
 
+            
             provider.AddService(service);
 
-            await _repository.UpdateAsync(provider);
+            
+            await _providerRepository.UpdateAsync(provider);
+
+            
+            return new ServiceListItemResponse
+            {
+                Id = service.Id,
+                Name = service.Name,
+                HourValueUsd = service.HourValueUsd
+            };
         }
     }
 }

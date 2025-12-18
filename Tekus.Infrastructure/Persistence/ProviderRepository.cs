@@ -28,7 +28,7 @@ namespace Tekus.Infrastructure.Persistence
 
         public async Task UpdateAsync(Provider provider)
         {
-            _context.Providers.Update(provider);
+           
 
             await _context.SaveChangesAsync();
         }
@@ -37,9 +37,34 @@ namespace Tekus.Infrastructure.Persistence
         {
             return await _context.Providers
                 .Include(p => p.Services)
+                    .ThenInclude(s => s.Countries)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
+        public async Task<PagedResult<Service>> GetServicesByProviderAsync(
+    Guid providerId,
+    PagedRequest request)
+        {
+            var query = _context.Providers
+                .Where(p => p.Id == providerId)
+                .SelectMany(p => p.Services)
+                .Include(s => s.Countries)
+                .AsQueryable();
 
+            var total = await query.CountAsync();
+
+            var items = await query
+                .Skip((request.Page - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<Service>
+            {
+                Page = request.Page,
+                PageSize = request.PageSize,
+                TotalItems = total,
+                Items = items
+            };
+        }
         public async Task DeleteAsync(Provider provider)
         {
             _context.Providers.Remove(provider);

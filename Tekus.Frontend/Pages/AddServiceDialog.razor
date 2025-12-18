@@ -1,6 +1,7 @@
 ﻿@using MudBlazor
 @inject CountryApiService CountryApi
 @inject ProviderApiService ProviderApi
+
 @using Tekus.Frontend.Models
 @using Tekus.Frontend.Services
 
@@ -9,19 +10,19 @@
 
         <MudText Typo="Typo.h6">Nuevo servicio</MudText>
 
-        <!-- Nombre -->
+   
         <MudTextField Label="Nombre del servicio"
                       @bind-Value="_model.Name"
                       Required="true" />
 
-        <!-- Valor por hora -->
+  
         <MudNumericField T="decimal"
                          Label="Valor hora (USD)"
                          @bind-Value="_model.HourValueUsd"
                          Required="true"
                          Min="0" />
 
-        <!-- Países -->
+   
         @if (_availableCountries.Count == 0)
         {
             <MudText Color="Color.Warning">
@@ -53,8 +54,9 @@
             Guardar
         </MudButton>
 
-        <MudButton OnClick="Cancel">
-            Cancelar
+        <MudButton Color = "Color.Secondary"
+           OnClick="Close"> 
+           Cerrar
         </MudButton>
     </DialogActions>
 </MudDialog>
@@ -87,23 +89,40 @@
             _availableCountries = new List<CountryDto>();
         }
     }
-    
+
 
     private async Task Submit()
     {
         try
         {
-            await ProviderApi.AddServiceAsync(ProviderId, _model);
+            // 1️⃣ Crear servicio
+            var createdService =
+                await ProviderApi.AddServiceAsync(ProviderId, new AddServiceRequest
+                {
+                    Name = _model.Name,
+                    HourValueUsd = _model.HourValueUsd
+                });
 
+            // 2️⃣ Asignar países (solo si hay)
+            if (_model.CountryCodes.Any())
+            {
+                await ProviderApi.AssignCountriesAsync(
+                    ProviderId,
+                    createdService.Id,
+                _model.CountryCodes.ToList()
+                );
+            }
+
+            // 3️⃣ Cerrar modal OK
             MudDialog.Close(DialogResult.Ok(true));
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            Console.Error.WriteLine(ex);
         }
     }
 
-    private void Cancel()
+    private void Close()
     {
         MudDialog.Cancel();
     }

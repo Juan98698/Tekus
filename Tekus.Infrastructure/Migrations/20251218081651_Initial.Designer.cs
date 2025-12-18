@@ -12,8 +12,8 @@ using Tekus.Infrastructure.Persistence.Context;
 namespace Tekus.Infrastructure.Migrations
 {
     [DbContext(typeof(TekusDbContext))]
-    [Migration("20251215025638_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251218081651_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,7 +59,6 @@ namespace Tekus.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(32)
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("HourValueUsd")

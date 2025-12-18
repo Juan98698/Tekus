@@ -11,19 +11,24 @@ namespace Tekus.Domain.Entities
 {
     public class Service
     {
-        public Guid Id { get; private set; }
+        public Guid Id { get; private set; } 
 
         public string Name { get; private set; }
         public decimal HourValueUsd { get; private set; }
 
         private readonly List<Country> _countries = new();
-        public IReadOnlyCollection<Country> Countries => _countries.AsReadOnly();
+        public IReadOnlyCollection<Country> Countries => _countries;
 
-        public Service(string name, decimal HourValueUsd)
+        protected Service() { } 
+
+        private Service(string name, decimal hourValueUsd)
         {
             SetName(name);
-            SetHourValueUsd(HourValueUsd);
+            SetHourValueUsd(hourValueUsd);
         }
+
+        public static Service Create(string name, decimal hourValueUsd)
+            => new Service(name, hourValueUsd);
 
         private void SetName(string name)
         {
@@ -41,13 +46,11 @@ namespace Tekus.Domain.Entities
             HourValueUsd = hourValueUsd;
         }
 
-
         public void Update(string name, decimal hourValueUsd)
         {
             SetName(name);
             SetHourValueUsd(hourValueUsd);
         }
-
 
         public void AddCountry(Country country)
         {
@@ -56,13 +59,5 @@ namespace Tekus.Domain.Entities
 
             _countries.Add(country);
         }
-
-
-
-
-
-
-
-
     }
 }

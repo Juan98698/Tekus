@@ -11,7 +11,7 @@
 </MudButton>
 
 <MudTable Items="_providers"
-          powsPerPage="_pageSize"
+          RowsPerPage="_pageSize"
           page="_page - 1"
           pageChanged="OnPageChanged">
 
@@ -26,11 +26,21 @@
         <MudTd>@context.Name</MudTd>
         <MudTd>@context.Nit</MudTd>
         <MudTd>@context.Email</MudTd>
+
         <MudTd>
-            <MudButton Size="Size.Small"
-                       OnClick="@(() => OpenAddServiceDialog(context.Id))">
-                Servicios
-            </MudButton>
+            <MudStack Spacing="1">
+                <MudButton Size="Size.Small"
+                           Variant="Variant.Outlined"
+                           OnClick="@(() => OpenServicesDialog(context.Id))">
+                    Ver servicios
+                </MudButton>
+
+                <MudButton Size="Size.Small"
+                           Color="Color.Primary"
+                           OnClick="@(() => OpenCreateServiceDialog(context.Id))">
+                    Crear servicio
+                </MudButton>
+            </MudStack>
         </MudTd>
     </RowTemplate>
 </MudTable>
@@ -57,16 +67,19 @@
         await LoadProviders();
     }
 
-    private async Task OpenCreateDialog()
+    private async Task OpenServicesDialog(Guid providerId)
     {
-        var dialog = await DialogService.ShowAsync<CreateProviderDialog>("Create Provider");
-        var result = await dialog.Result;
+        var parameters = new DialogParameters
+        {
+            ["ProviderId"] = providerId
+        };
 
-        if (!result.Canceled)
-            await LoadProviders();
+        await DialogService.ShowAsync<ProviderServicesDialog>(
+            "Servicios",
+            parameters);
     }
 
-    private async Task OpenAddServiceDialog(Guid providerId)
+    private async Task OpenCreateServiceDialog(Guid providerId)
     {
         var parameters = new DialogParameters
         {
@@ -74,9 +87,18 @@
         };
 
         var dialog = await DialogService.ShowAsync<AddServiceDialog>(
-            "Add Service",
+            "Crear servicio",
             parameters);
 
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            await LoadProviders();
+    }
+
+    private async Task OpenCreateDialog()
+    {
+        var dialog = await DialogService.ShowAsync<CreateProviderDialog>("Create Provider");
         var result = await dialog.Result;
 
         if (!result.Canceled)

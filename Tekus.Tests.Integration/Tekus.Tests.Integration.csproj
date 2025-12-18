@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Tekus.API\Tekus.API.csproj" />
+    <ProjectReference Include="..\Tekus.Infrastructure\Tekus.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

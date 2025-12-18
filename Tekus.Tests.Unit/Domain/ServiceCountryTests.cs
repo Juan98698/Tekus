@@ -15,7 +15,7 @@ namespace Tekus.Tests.Unit.Domain
         [Fact]
         public void Should_add_country_to_service()
         {
-            var service = new Service("Hosting", 100);
+            var service = Service.Create("Hosting", 100);
             var country = new Country("CO", "Colombia");
 
             service.AddCountry(country);
@@ -26,7 +26,7 @@ namespace Tekus.Tests.Unit.Domain
         [Fact]
         public void Should_not_allow_duplicate_country()
         {
-            var service = new Service("Hosting", 100);
+            var service = Service.Create("Hosting", 100);
             var country = new Country("CO", "Colombia");
 
             service.AddCountry(country);

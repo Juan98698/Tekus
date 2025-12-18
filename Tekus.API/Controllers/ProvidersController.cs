@@ -68,12 +68,14 @@ namespace Tekus.API.Controllers
 
         [HttpPost("{id:guid}/services")]
         public async Task<IActionResult> AddService(
-            Guid id,
-            [FromBody] AddServiceRequest request)
+         Guid id,
+         [FromBody] AddServiceRequest request)
         {
             request.ProviderId = id;
-            await _addServiceToProviderUseCase.ExecuteAsync(request);
-            return NoContent();
+
+            var result = await _addServiceToProviderUseCase.ExecuteAsync(request);
+
+            return Ok(result); 
         }
 
         [HttpPut("{id:guid}")]
@@ -112,7 +114,7 @@ namespace Tekus.API.Controllers
             await _deleteServiceUseCase.ExecuteAsync(providerId, serviceId);
             return NoContent();
         }
-        
+
         [HttpGet("{providerId:guid}/services")]
         public async Task<IActionResult> GetServices(
         Guid providerId,

@@ -6,6 +6,12 @@ using Tekus.Application.DependencyInjection;
 using Tekus.Application.Interfaces.Services;
 using Tekus.Infrastructure.DependencyInjection;
 using Tekus.Infrastructure.ExternalServices;
+using Microsoft.EntityFrameworkCore;
+using Tekus.Infrastructure.Persistence.Context;
+
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
@@ -38,6 +44,12 @@ builder.Services.AddAuthentication("Default")
         "Default", null);
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddDbContext<TekusDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("Default")
+    )
+);
 
 var app = builder.Build();
 app.UseCors("AllowDev");

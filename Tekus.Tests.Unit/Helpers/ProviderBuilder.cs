@@ -14,7 +14,7 @@ namespace Tekus.Tests.Unit.Helpers
         {
             var provider = new Provider("123", "Test Provider", "test@test.com");
 
-            service = new Service("Hosting", 100);
+            service = Service.Create("Hosting", 100); // 👈 ASIGNAS el out
             provider.AddService(service);
 
             return provider;

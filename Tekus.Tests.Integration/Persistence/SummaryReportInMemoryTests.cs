@@ -24,8 +24,7 @@ namespace Tekus.Tests.Integration.Persistence
             var repository = new ProviderRepository(context);
 
             var provider = new Provider("123", "Provider Test", "test@test.com");
-            var service = new Service("Hosting", 100);
-
+            var service = Service.Create("Hosting", 100);
             service.AddCountry(new Country("CO", "Colombia"));
             service.AddCountry(new Country("MX", "Mexico"));
 

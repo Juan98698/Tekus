@@ -56,7 +56,6 @@ namespace Tekus.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(32)
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("HourValueUsd")

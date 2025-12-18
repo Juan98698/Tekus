@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
-using Tekus.Application.DTOs.Summary;
+using Tekus.Frontend.Models.Summary;
+
 namespace Tekus.Frontend.Services
 {
     public class SummaryApiService
