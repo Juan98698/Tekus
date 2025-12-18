@@ -10,10 +10,11 @@
     Create Provider
 </MudButton>
 
-<MudTable Items="_providers"
+<MudTable T="ProviderDto"
+          Items="_providers"
           RowsPerPage="_pageSize"
-          page="_page - 1"
-          pageChanged="OnPageChanged">
+          Page="@(_page - 1)"
+          PageChanged="OnPageChanged">
 
     <HeaderContent>
         <MudTh>Nombre</MudTh>
@@ -43,6 +44,7 @@
             </MudStack>
         </MudTd>
     </RowTemplate>
+
 </MudTable>
 
 @code {
@@ -74,9 +76,19 @@
             ["ProviderId"] = providerId
         };
 
+        var options = new DialogOptions
+        {
+            CloseButton = false,
+            BackdropClick = false,
+            MaxWidth = MaxWidth.Large,
+            FullWidth = true
+        };
+
         await DialogService.ShowAsync<ProviderServicesDialog>(
             "Servicios",
-            parameters);
+            parameters,
+            options
+        );
     }
 
     private async Task OpenCreateServiceDialog(Guid providerId)
@@ -86,9 +98,19 @@
             ["ProviderId"] = providerId
         };
 
+        var options = new DialogOptions
+        {
+            CloseButton = false,
+            BackdropClick = false,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true
+        };
+
         var dialog = await DialogService.ShowAsync<AddServiceDialog>(
             "Crear servicio",
-            parameters);
+            parameters,
+            options
+        );
 
         var result = await dialog.Result;
 
@@ -98,7 +120,19 @@
 
     private async Task OpenCreateDialog()
     {
-        var dialog = await DialogService.ShowAsync<CreateProviderDialog>("Create Provider");
+        var options = new DialogOptions
+        {
+            CloseButton = false,
+            BackdropClick = false,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true
+        };
+
+        var dialog = await DialogService.ShowAsync<CreateProviderDialog>(
+            "Create Provider",
+            options: options
+        );
+
         var result = await dialog.Result;
 
         if (!result.Canceled)

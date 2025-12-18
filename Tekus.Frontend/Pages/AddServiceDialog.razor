@@ -1,4 +1,4 @@
-﻿@using MudBlazor
+﻿
 @inject CountryApiService CountryApi
 @inject ProviderApiService ProviderApi
 
@@ -6,47 +6,33 @@
 @using Tekus.Frontend.Services
 
 <MudDialog>
-    <DialogContent>
 
+    <DialogContent>
         <MudText Typo="Typo.h6">Nuevo servicio</MudText>
 
-   
         <MudTextField Label="Nombre del servicio"
                       @bind-Value="_model.Name"
-                      Required="true" />
+                      Required />
 
-  
         <MudNumericField T="decimal"
                          Label="Valor hora (USD)"
                          @bind-Value="_model.HourValueUsd"
-                         Required="true"
-                         Min="0" />
+                         Required
+                         Min="1" />
 
-   
-        @if (_availableCountries.Count == 0)
-        {
-            <MudText Color="Color.Warning">
-                Cargando países...
-            </MudText>
-        }
-        else
-        {
-            <MudSelect T="string"
-                       Label="Países"
-                       MultiSelection="true"
-                       SelectedValues="_model.CountryCodes"
-                       SelectedValuesChanged="@(values => _model.CountryCodes = values.ToHashSet())">
+        <MudSelect T="string"
+                   Label="Países"
+                   MultiSelection
+                   SelectedValues="_model.CountryCodes"
+                   SelectedValuesChanged="v => _model.CountryCodes = v.ToHashSet()">
 
-                @foreach (var country in _availableCountries)
-                {
-                    <MudSelectItem Value="@country.Code">
-                        @country.Name
-                    </MudSelectItem>
-                }
-
-            </MudSelect>
-        }
-
+            @foreach (var country in _availableCountries)
+            {
+                <MudSelectItem Value="@country.Code">
+                    @country.Name
+                </MudSelectItem>
+            }
+        </MudSelect>
     </DialogContent>
 
     <DialogActions>
@@ -54,76 +40,51 @@
             Guardar
         </MudButton>
 
-        <MudButton Color = "Color.Secondary"
-           OnClick="Close"> 
-           Cerrar
+        <MudButton Color="Color.Secondary" OnClick="Cancel">
+            Cerrar
         </MudButton>
     </DialogActions>
-</MudDialog>
 
+</MudDialog>
 @code {
     [CascadingParameter]
     public IMudDialogInstance MudDialog { get; set; } = default!;
-
+    private void Cancel()
+    {
+        Console.WriteLine($"Dialog instance: {MudDialog}");
+        MudDialog?.Cancel();
+    }
     [Parameter]
     public Guid ProviderId { get; set; }
 
-    private AddServiceRequest _model = new()
-    {
-        CountryCodes = new HashSet<string>()
-    };
-
+    private AddServiceRequest _model = new();
     private List<CountryDto> _availableCountries = new();
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            _availableCountries = await CountryApi.GetCountriesAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine("Error cargando países:");
-            Console.Error.WriteLine(ex.Message);
-
-            _availableCountries = new List<CountryDto>();
-        }
+        _availableCountries = await CountryApi.GetCountriesAsync();
     }
-
 
     private async Task Submit()
     {
-        try
-        {
-            // 1️⃣ Crear servicio
-            var createdService =
-                await ProviderApi.AddServiceAsync(ProviderId, new AddServiceRequest
-                {
-                    Name = _model.Name,
-                    HourValueUsd = _model.HourValueUsd
-                });
-
-            // 2️⃣ Asignar países (solo si hay)
-            if (_model.CountryCodes.Any())
+        var service = await ProviderApi.AddServiceAsync(
+            ProviderId,
+            new AddServiceRequest
             {
-                await ProviderApi.AssignCountriesAsync(
-                    ProviderId,
-                    createdService.Id,
-                _model.CountryCodes.ToList()
-                );
-            }
+                Name = _model.Name,
+                HourValueUsd = _model.HourValueUsd
+            });
 
-            // 3️⃣ Cerrar modal OK
-            MudDialog.Close(DialogResult.Ok(true));
-        }
-        catch (Exception ex)
+        if (_model.CountryCodes.Any())
         {
-            Console.Error.WriteLine(ex);
+            await ProviderApi.AssignCountriesAsync(
+                ProviderId,
+                service.Id,
+                _model.CountryCodes.ToList());
         }
+
+        MudDialog.Close(DialogResult.Ok(true));
     }
 
-    private void Close()
-    {
-        MudDialog.Cancel();
-    }
+
 }

@@ -1,14 +1,13 @@
 ﻿@using Tekus.Frontend.Models
 @using Tekus.Frontend.Services
 @inject ProviderApiService Api
-@using MudBlazor
 
 <MudDialog>
 
     <DialogContent>
         <MudText Typo="Typo.h6">Servicios del proveedor</MudText>
 
-        <MudTable Items="_services"
+        <MudTable T="ServiceDto"
                   ServerData="LoadServerData"
                   RowsPerPage="_pageSize">
 
@@ -16,64 +15,43 @@
                 <MudTh>Nombre</MudTh>
                 <MudTh>Valor hora (USD)</MudTh>
                 <MudTh>País(es)</MudTh>
-           
             </HeaderContent>
 
             <RowTemplate>
                 <MudTd>@context.Name</MudTd>
                 <MudTd>@context.HourValueUsd</MudTd>
-
                 <MudTd>
-                    @if (context.Countries != null && context.Countries.Any())
-                    {
-                        @string.Join(", ", context.Countries.Select(c => c.Name))
-                    }
-                    else
-                    {
-                        <MudText Color="Color.Secondary" Typo="Typo.caption">
-                            —
-                        </MudText>
-                    }
+                    @string.Join(", ", context.Countries.Select(c => c.Name))
                 </MudTd>
-
-     
-               
             </RowTemplate>
 
         </MudTable>
     </DialogContent>
 
-    <DialogActions>        
-        <MudButton Color="Color.Secondary" OnClick="Close">
+    <DialogActions>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">
             Cerrar
         </MudButton>
     </DialogActions>
-
 </MudDialog>
+
 
 @code {
     [CascadingParameter]
     public IMudDialogInstance MudDialog { get; set; } = default!;
-    private void Cancel()
-    {
-        MudDialog.Cancel();
-    }
+
     [Parameter]
     public Guid ProviderId { get; set; }
 
-    private List<ServiceDto> _services = new();
     private int _pageSize = 10;
 
-    private async Task<TableData<ServiceDto>> LoadServerData(TableState state, CancellationToken token)
+    private async Task<TableData<ServiceDto>> LoadServerData(
+        TableState state,
+        CancellationToken token)
     {
         var page = state.Page + 1;
-
         var result = await Api.GetServicesByProviderAsync(
-            ProviderId,
-            page,
-            state.PageSize
-        );
-  
+            ProviderId, page, state.PageSize);
 
         return new TableData<ServiceDto>
         {
@@ -81,9 +59,10 @@
             TotalItems = result.TotalCount
         };
     }
-   
-    private void Close()
+
+    private void Cancel()
     {
-        MudDialog.Cancel();
+        Console.WriteLine($"Dialog instance: {MudDialog}");
+        MudDialog?.Cancel();
     }
 }

@@ -1,4 +1,4 @@
-﻿@using MudBlazor
+﻿
 @using Tekus.Frontend.Models
 @using Tekus.Frontend.Services
 @inject ProviderApiService Api
@@ -36,17 +36,25 @@
         </MudButton>
 
     </DialogContent>
-
     <DialogActions>
-        <MudButton OnClick="Submit" Color="Color.Primary">Save</MudButton>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">
+            Guardar
+        </MudButton>
+
+        <MudButton Color="Color.Secondary" OnClick="Cancel">
+            Cancelar
+        </MudButton>
     </DialogActions>
 </MudDialog>
 
+
 @code {
-    [CascadingParameter] public IMudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter]
+    public IMudDialogInstance MudDialog { get; set; } = default!;
+
     private CreateProviderRequest _model = new();
     private List<CustomFieldDto> _customFields = new();
+
     private void AddField()
     {
         _customFields.Add(new CustomFieldDto());
@@ -70,7 +78,10 @@
         MudDialog.Close(DialogResult.Ok(true));
     }
 
-
-    private void Cancel() => MudDialog.Cancel();
+    private void Cancel()
+    {
+        Console.WriteLine($"Dialog instance: {MudDialog}");
+        MudDialog?.Cancel();
+    }
 }
 
