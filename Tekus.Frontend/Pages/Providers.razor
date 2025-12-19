@@ -20,6 +20,7 @@
         <MudTh>Nombre</MudTh>
         <MudTh>NIT</MudTh>
         <MudTh>Email</MudTh>
+        <MudTh>Campos Personalizados</MudTh>
         <MudTh>Acciones</MudTh>
     </HeaderContent>
 
@@ -27,6 +28,26 @@
         <MudTd>@context.Name</MudTd>
         <MudTd>@context.Nit</MudTd>
         <MudTd>@context.Email</MudTd>
+
+        <MudTd>
+            @if (context.CustomFields != null && context.CustomFields.Any())
+            {
+                <MudStack Spacing="0">
+                    @foreach (var field in context.CustomFields)
+                    {
+                        <MudText Typo="Typo.caption">
+                            <b>@field.Key:</b> @field.Value
+                        </MudText>
+                    }
+                </MudStack>
+            }
+            else
+            {
+                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                    —
+                </MudText>
+            }
+        </MudTd>
 
         <MudTd>
             <MudStack Spacing="1">

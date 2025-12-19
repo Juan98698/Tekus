@@ -12,5 +12,7 @@ namespace Tekus.Application.DTOs
         public string Nit { get; set; } = default!;
         public string Name { get; set; } = default!;
         public string Email { get; set; } = default!;
+        public Dictionary<string, string> CustomFields { get; set; }
+
     }
 }

@@ -32,7 +32,10 @@ namespace Tekus.Application.UseCases.Providers
                     Id = p.Id,
                     Nit = p.Nit,
                     Name = p.Name,
-                    Email = p.Email
+                    Email = p.Email,
+                    CustomFields = p.CustomFields.ToDictionary(cf => cf.Key, cf => cf.Value)
+
+
                 }).ToList()
             };
         }
