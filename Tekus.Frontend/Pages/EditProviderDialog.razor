@@ -4,17 +4,40 @@
 @inject ProviderApiService Api
 
 <MudDialog>
+
     <DialogContent>
         <MudText Typo="Typo.h6">Editar proveedor</MudText>
 
-        <MudTextField Label="NIT"
-                      @bind-Value="_model.Nit" />
+        <MudTextField Label="NIT" @bind-Value="_model.Nit" />
+        <MudTextField Label="Nombre" @bind-Value="_model.Name" />
+        <MudTextField Label="Email" @bind-Value="_model.Email" />
 
-        <MudTextField Label="Nombre"
-                      @bind-Value="_model.Name" />
+        <MudDivider Class="my-3" />
 
-        <MudTextField Label="Email"
-                      @bind-Value="_model.Email" />
+        @foreach (var field in _customFields)
+        {
+            <MudGrid>
+                <MudItem xs="5">
+                    <MudTextField Label="Campo"
+                                  @bind-Value="field.Key" />
+                </MudItem>
+
+                <MudItem xs="5">
+                    <MudTextField Label="Valor"
+                                  @bind-Value="field.Value" />
+                </MudItem>
+
+                <MudItem xs="2">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   OnClick="@(() => RemoveField(field))" />
+                </MudItem>
+            </MudGrid>
+        }
+
+        <MudButton Variant="Variant.Outlined"
+                   OnClick="AddField">
+            Agregar campo
+        </MudButton>
     </DialogContent>
 
     <DialogActions>
@@ -26,6 +49,7 @@
             Cancelar
         </MudButton>
     </DialogActions>
+
 </MudDialog>
 
 @code {
@@ -35,23 +59,43 @@
     [Parameter]
     public ProviderDto Provider { get; set; } = default!;
 
-    private ProviderDto _model = new();
+    private UpdateProviderRequest _model = new();
+    private List<CustomFieldDto> _customFields = new();
 
     protected override void OnInitialized()
     {
-        
-        _model = new ProviderDto
-        {
-            Id = Provider.Id,
-            Nit = Provider.Nit,
-            Name = Provider.Name,
-            Email = Provider.Email
-        };
+        _model.Id = Provider.Id;
+        _model.Nit = Provider.Nit;
+        _model.Name = Provider.Name;
+        _model.Email = Provider.Email;
+
+        _customFields = Provider.CustomFields
+            .Select(kv => new CustomFieldDto
+            {
+                Key = kv.Key,
+                Value = kv.Value
+            })
+            .ToList();
+    }
+
+    private void AddField()
+    {
+        _customFields.Add(new CustomFieldDto());
+    }
+
+    private void RemoveField(CustomFieldDto field)
+    {
+        _customFields.Remove(field);
     }
 
     private async Task Save()
     {
+        _model.CustomFields = _customFields
+            .Where(f => !string.IsNullOrWhiteSpace(f.Key))
+            .ToDictionary(f => f.Key, f => f.Value);
+
         await Api.UpdateProviderAsync(_model);
+
         MudDialog.Close(DialogResult.Ok(true));
     }
 

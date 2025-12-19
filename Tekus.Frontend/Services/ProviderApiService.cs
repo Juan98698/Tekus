@@ -39,7 +39,7 @@
                 return await resp.Content.ReadFromJsonAsync<ProviderDto>();
             }
 
-        public async Task UpdateProviderAsync(ProviderDto provider)
+        public async Task UpdateProviderAsync(UpdateProviderRequest provider)
         {
             var response = await _http.PutAsJsonAsync(
                 $"api/providers/{provider.Id}",

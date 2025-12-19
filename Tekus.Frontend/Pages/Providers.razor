@@ -13,8 +13,8 @@
 <MudTable T="ProviderDto"
           Items="_providers"
           RowsPerPage="_pageSize"
-          Page="@(_page - 1)"
-          PageChanged="OnPageChanged">
+          page="@(_page - 1)"
+          pageChanged="OnPageChanged">
 
     <HeaderContent>
         <MudTh>Nombre</MudTh>

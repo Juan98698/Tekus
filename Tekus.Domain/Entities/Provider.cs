@@ -19,9 +19,20 @@ namespace Tekus.Domain.Entities
         private readonly Dictionary<string, string> _customFields = new();
         public IReadOnlyDictionary<string, string> CustomFields => _customFields;
 
+        public void ClearCustomFields()
+        {
+            _customFields.Clear();
+        }
+
+        public void AddCustomField(string key, string value)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("Custom field key is required");
+
+            _customFields[key] = value;
+        }
 
 
-        
         private Provider() { }
 
         
