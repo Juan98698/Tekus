@@ -62,6 +62,18 @@
                            OnClick="@(() => OpenCreateServiceDialog(context.Id))">
                     Crear servicio
                 </MudButton>
+
+                <MudButton Size="Size.Small"
+                           Color="Color.Warning"
+                           OnClick="@(() => OpenEditProviderDialog(context))">
+                    Editar Proveedor
+                </MudButton>
+
+                <MudButton Size="Size.Small"
+                           Color="Color.Error"
+                           OnClick="@(() => ConfirmDeleteProvider(context))">
+                    Eliminar Proveedor
+                </MudButton>
             </MudStack>
         </MudTd>
     </RowTemplate>
@@ -158,5 +170,48 @@
 
         if (!result.Canceled)
             await LoadProviders();
+    }
+
+    private async Task OpenEditProviderDialog(ProviderDto provider)
+    {
+        var parameters = new DialogParameters
+        {
+            ["Provider"] = provider
+        };
+
+        var options = new DialogOptions
+        {
+            CloseButton = false,
+            BackdropClick = false,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true
+        };
+
+        var dialog = await DialogService.ShowAsync<EditProviderDialog>(
+            "Editar proveedor",
+            parameters,
+            options
+        );
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            await LoadProviders();
+    }
+
+    private async Task ConfirmDeleteProvider(ProviderDto provider)
+    {
+        bool? confirmed = await DialogService.ShowMessageBox(
+            "Eliminar proveedor",
+            $"¿Estás seguro de eliminar a {provider.Name}?",
+            yesText: "Eliminar",
+            cancelText: "Cancelar"
+        );
+
+        if (confirmed == true)
+        {
+            await Api.DeleteProviderAsync(provider.Id);
+            await LoadProviders();
+        }
     }
 }

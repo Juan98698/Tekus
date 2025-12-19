@@ -1,0 +1,62 @@
+﻿
+@using Tekus.Frontend.Models
+@using Tekus.Frontend.Services
+@inject ProviderApiService Api
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6">Editar proveedor</MudText>
+
+        <MudTextField Label="NIT"
+                      @bind-Value="_model.Nit" />
+
+        <MudTextField Label="Nombre"
+                      @bind-Value="_model.Name" />
+
+        <MudTextField Label="Email"
+                      @bind-Value="_model.Email" />
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Save">
+            Guardar
+        </MudButton>
+
+        <MudButton Color="Color.Secondary" OnClick="Cancel">
+            Cancelar
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public ProviderDto Provider { get; set; } = default!;
+
+    private ProviderDto _model = new();
+
+    protected override void OnInitialized()
+    {
+        
+        _model = new ProviderDto
+        {
+            Id = Provider.Id,
+            Nit = Provider.Nit,
+            Name = Provider.Name,
+            Email = Provider.Email
+        };
+    }
+
+    private async Task Save()
+    {
+        await Api.UpdateProviderAsync(_model);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

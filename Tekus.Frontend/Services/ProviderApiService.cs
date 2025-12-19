@@ -39,11 +39,28 @@
                 return await resp.Content.ReadFromJsonAsync<ProviderDto>();
             }
 
+        public async Task UpdateProviderAsync(ProviderDto provider)
+        {
+            var response = await _http.PutAsJsonAsync(
+                $"api/providers/{provider.Id}",
+                provider
+            );
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeleteProviderAsync(Guid providerId)
+        {
+            var response = await _http.DeleteAsync(
+                $"api/providers/{providerId}"
+            );
+
+            response.EnsureSuccessStatusCode();
+        }
 
 
-     
 
-            public async Task AssignCountriesAsync(
+        public async Task AssignCountriesAsync(
             Guid providerId,
             Guid serviceId,
             List<string> countryCodes)
