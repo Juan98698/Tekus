@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tekus.API.Security;
 using Tekus.Application.Common;
 using Tekus.Application.DTOs;
+using Tekus.Application.Interfaces.Repositories;
 using Tekus.Application.UseCases.Providers;
 using Tekus.Application.UseCases.Services;
 
@@ -23,6 +24,8 @@ namespace Tekus.API.Controllers
         private readonly DeleteServiceUseCase _deleteServiceUseCase;
         private readonly ListServicesByProviderPagedUseCase _listServicesByProviderPagedUseCase;
         private readonly AssignCountriesToServiceUseCase _assignCountriesUseCase;
+        private readonly SyncCountriesToServiceUseCase _syncCountriesToServiceUseCase;
+        private readonly IProviderRepository _providerRepository;
 
 
         public ProvidersController(
@@ -34,7 +37,9 @@ namespace Tekus.API.Controllers
             UpdateServiceUseCase updateServiceUseCase,
             DeleteServiceUseCase deleteServiceUseCase,
             ListServicesByProviderPagedUseCase listServicesByProviderPagedUseCase,
-            AssignCountriesToServiceUseCase assignCountriesUseCase
+            AssignCountriesToServiceUseCase assignCountriesUseCase,
+            SyncCountriesToServiceUseCase syncCountriesToServiceUseCase,
+            IProviderRepository providerRepository
             )
             
         {
@@ -47,7 +52,8 @@ namespace Tekus.API.Controllers
             _deleteServiceUseCase = deleteServiceUseCase;
             _listServicesByProviderPagedUseCase = listServicesByProviderPagedUseCase;
             _assignCountriesUseCase = assignCountriesUseCase;
-
+            _syncCountriesToServiceUseCase = syncCountriesToServiceUseCase;
+            _providerRepository = providerRepository;
 
 
         }
@@ -117,13 +123,29 @@ namespace Tekus.API.Controllers
 
         [HttpGet("{providerId:guid}/services")]
         public async Task<IActionResult> GetServices(
-        Guid providerId,
-        [FromQuery] PagedRequest request)
+    Guid providerId,
+    [FromQuery] PagedRequest request)
         {
             var result =
                 await _listServicesByProviderPagedUseCase.ExecuteAsync(providerId, request);
 
-            return Ok(result);
+            return Ok(new PagedResult<ServiceListItemResponse>
+            {
+                Page = result.Page,
+                PageSize = result.PageSize,
+                TotalItems = result.TotalItems,
+                Items = result.Items.Select(s => new ServiceListItemResponse
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    HourValueUsd = s.HourValueUsd,
+                    Countries = s.Countries.Select(c => new CountryResponse
+                    {
+                        Code = c.Code,
+                        Name = c.Name
+                    }).ToList()
+                }).ToList()
+            });
         }
 
         //Endpints con Country
@@ -142,6 +164,50 @@ namespace Tekus.API.Controllers
             });
 
             return NoContent();
+        }
+
+        [HttpPut("{providerId:guid}/services/{serviceId:guid}/countries")]
+        public async Task<IActionResult> SyncCountries(
+            Guid providerId,
+            Guid serviceId,
+            [FromBody] List<string> countryCodes)
+        {
+            await _syncCountriesToServiceUseCase.ExecuteAsync(new SyncCountriesToServiceRequest
+            {
+                ProviderId = providerId,
+                ServiceId = serviceId,
+                CountryCodes = countryCodes
+            });
+
+            return NoContent();
+        }
+
+        [HttpGet("{providerId:guid}/services/{serviceId:guid}")]
+        public async Task<IActionResult> GetServiceById(
+    Guid providerId,
+    Guid serviceId)
+        {
+            var provider = await _providerRepository.GetByIdAsync(providerId);
+
+            if (provider == null)
+                return NotFound();
+
+            var service = provider.Services.FirstOrDefault(s => s.Id == serviceId);
+
+            if (service == null)
+                return NotFound();
+
+            return Ok(new ServiceListItemResponse
+            {
+                Id = service.Id,
+                Name = service.Name,
+                HourValueUsd = service.HourValueUsd,
+                Countries = service.Countries.Select(c => new CountryResponse
+                {
+                    Code = c.Code,
+                    Name = c.Name
+                }).ToList()
+            });
         }
     }
 }

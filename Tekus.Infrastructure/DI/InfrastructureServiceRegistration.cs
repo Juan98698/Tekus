@@ -10,13 +10,14 @@ using Tekus.Application.Interfaces.Repositories;
 using Tekus.Infrastructure.Persistence;
 using Tekus.Infrastructure.Persistence.Context;
 
-namespace Tekus.Infrastructure.DependencyInjection
+
+namespace Tekus.Infrastructure.DI
 {
     public static class InfrastructureServiceRegistration
     {
         public static IServiceCollection AddInfrastructure(
-            this IServiceCollection services,
-            IConfiguration configuration)
+         this IServiceCollection services,
+         IConfiguration configuration)
         {
             services.AddDbContext<TekusDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));

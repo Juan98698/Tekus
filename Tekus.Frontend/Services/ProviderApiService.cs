@@ -58,6 +58,41 @@
             response.EnsureSuccessStatusCode();
         }
 
+        public async Task UpdateServiceAsync(
+        Guid providerId,
+        Guid serviceId,
+        UpdateServiceRequest request)
+        {
+            var response = await _http.PutAsJsonAsync(
+                $"api/providers/{providerId}/services/{serviceId}",
+                request
+            );
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeleteServiceAsync(
+        Guid providerId,
+        Guid serviceId)
+        {
+            var response = await _http.DeleteAsync(
+                $"api/providers/{providerId}/services/{serviceId}"
+            );
+
+            response.EnsureSuccessStatusCode();
+        }
+        public async Task SyncCountriesAsync(
+    Guid providerId,
+    Guid serviceId,
+    List<string> countryCodes)
+        {
+            var response = await _http.PutAsJsonAsync(
+                $"api/providers/{providerId}/services/{serviceId}/countries",
+                countryCodes
+            );
+
+            response.EnsureSuccessStatusCode();
+        }
 
 
         public async Task AssignCountriesAsync(
@@ -72,9 +107,16 @@
 
              response.EnsureSuccessStatusCode();
              }
+        public async Task<ServiceDto> GetServiceByIdAsync(
+         Guid providerId,
+         Guid serviceId)
+        {
+            return await _http.GetFromJsonAsync<ServiceDto>(
+                $"api/providers/{providerId}/services/{serviceId}"
+            ) ?? throw new Exception("Service not found");
+        }
 
-
-             public async Task<ServiceDto> AddServiceAsync(
+        public async Task<ServiceDto> AddServiceAsync(
             Guid providerId,
             AddServiceRequest request)
              {

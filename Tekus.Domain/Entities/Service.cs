@@ -59,5 +59,9 @@ namespace Tekus.Domain.Entities
 
             _countries.Add(country);
         }
+        public void ClearCountries()
+        {
+            _countries.Clear();
+        }
     }
 }

@@ -1,0 +1,99 @@
+﻿@using MudBlazor
+@inject ProviderApiService ProviderApi
+@using Tekus.Frontend.Models
+@using Tekus.Frontend.Services
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6">Editar servicio</MudText>
+
+        <MudTextField Label="Nombre"
+                      @bind-Value="_model.Name"
+                      Required />
+
+        <MudNumericField T="decimal"
+                         Label="Valor hora (USD)"
+                         @bind-Value="_model.HourValueUsd"
+                         Required
+                         Min="1" />
+
+        <MudSelect T="string"
+                   Label="Países"
+                   MultiSelection
+                   SelectedValues="SelectedCountryCodes"
+                   SelectedValuesChanged="v => SelectedCountryCodes = v.ToHashSet()">
+            @foreach (var country in _availableCountries)
+            {
+                <MudSelectItem Value="@country.Code">
+                    @country.Name
+                </MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Submit">
+            Guardar
+        </MudButton>
+
+        <MudButton Color="Color.Secondary" OnClick="Cancel">
+            Cancelar
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter] public Guid ProviderId { get; set; }
+    [Parameter] public ServiceDto Service { get; set; } = default!;
+   [Inject] public CountryApiService CountryApi { get; set; } = default!;
+
+    private UpdateServiceRequest _model = new();
+    private HashSet<string> SelectedCountryCodes = new();
+    private List<CountryDto> _availableCountries = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // 1️⃣ Cargar países disponibles
+        _availableCountries = await CountryApi.GetCountriesAsync();
+
+        // 2️⃣ Cargar datos del servicio (desde el parámetro)
+        _model.Name = Service.Name;
+        _model.HourValueUsd = Service.HourValueUsd;
+
+        SelectedCountryCodes = Service.Countries
+            .Select(c => c.Code)
+            .ToHashSet();
+    }
+
+    private async Task Submit()
+    {
+        try
+        {
+            
+            await ProviderApi.UpdateServiceAsync(
+                ProviderId,
+                Service.Id,
+                _model
+            );
+
+           
+            await ProviderApi.SyncCountriesAsync(
+                ProviderId,
+                Service.Id,
+                SelectedCountryCodes.ToList()
+            );
+
+            
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+        }
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

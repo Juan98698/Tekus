@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tekus.Application.Interfaces.Repositories;
 using Tekus.Application.UseCases.Providers;
 using Tekus.Application.UseCases.Reports;
 using Tekus.Application.UseCases.Services;
 using Tekus.Application.UseCases.Summary;
+
+
 
 namespace Tekus.Application.DependencyInjection
 {
@@ -19,7 +22,6 @@ namespace Tekus.Application.DependencyInjection
             services.AddScoped<ListProvidersUseCase>();
             services.AddScoped<AddServiceToProviderUseCase>();
             services.AddScoped<UpdateProviderUseCase>();
-            services.AddScoped<UpdateProviderUseCase>();
             services.AddScoped<DeleteProviderUseCase>();
             services.AddScoped<UpdateServiceUseCase>();
             services.AddScoped<DeleteServiceUseCase>();
@@ -27,7 +29,8 @@ namespace Tekus.Application.DependencyInjection
             services.AddScoped<AssignCountriesToServiceUseCase>();
             services.AddScoped<GetSummaryReportUseCase>();
             services.AddScoped<GetSummaryUseCase>();
-
+            services.AddScoped<SyncCountriesToServiceUseCase>();
+           
             return services;
         }
     }

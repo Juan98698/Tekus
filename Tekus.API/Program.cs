@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 using Tekus.API.Middlewares;
 using Tekus.API.Security;
 using Tekus.Application;
 using Tekus.Application.DependencyInjection;
 using Tekus.Application.Interfaces.Services;
-using Tekus.Infrastructure.DependencyInjection;
+using Tekus.Application.UseCases.Services;
+using Tekus.Infrastructure.DI;
 using Tekus.Infrastructure.ExternalServices;
-using Microsoft.EntityFrameworkCore;
 using Tekus.Infrastructure.Persistence.Context;
+
 
 
 
@@ -26,7 +28,7 @@ builder.Services.AddCors(options =>
 
 // Controllers
 builder.Services.AddControllers();
-
+builder.Services.AddScoped<SyncCountriesToServiceUseCase>();
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
