@@ -2,40 +2,67 @@
 @using Tekus.Frontend.Models
 @using Tekus.Frontend.Services
 @inject ProviderApiService Api
+@inject ISnackbar Snackbar
 
 <MudDialog>
     <DialogContent>
-        <MudTextField Label="NIT" @bind-Value="_model.Nit" />
-        <MudTextField Label="Name" @bind-Value="_model.Name" />
-        <MudTextField Label="Email" @bind-Value="_model.Email" />
-        <MudDivider Class="my-3" />
+        <MudText Typo="Typo.h6">Crear proveedor</MudText>
 
-        <MudText Typo="Typo.subtitle1">Campos personalizados</MudText>
+        <MudForm @ref="_form" Model="_model">
 
-        @foreach (var field in _customFields)
-        {
-            <MudGrid Class="mb-2">
-                <MudItem xs="5">
-                    <MudTextField Label="Nombre" @bind-Value="field.Key" />
-                </MudItem>
-                <MudItem xs="5">
-                    <MudTextField Label="Valor" @bind-Value="field.Value" />
-                </MudItem>
-                <MudItem xs="2" Class="d-flex align-center">
-                    <MudIconButton Icon="@Icons.Material.Filled.Close"
-                                   Color="Color.Error"
-                                   OnClick="@(() => RemoveField(field))" />
-                </MudItem>
-            </MudGrid>
-        }
+            <MudTextField Label="NIT"
+                          @bind-Value="_model.Nit"
+                          Required="true"
+                          RequiredError="El NIT es obligatorio" />
 
-        <MudButton Variant="Variant.Outlined"
-                   StartIcon="@Icons.Material.Filled.Add"
-                   OnClick="AddField">
-            Agregar campo
-        </MudButton>
+            <MudTextField Label="Nombre"
+                          @bind-Value="_model.Name"
+                          Required="true"
+                          RequiredError="El nombre es obligatorio" />
 
+            <MudTextField Label="Email"
+                          @bind-Value="_model.Email"
+                          Required="true"
+                          RequiredError="El email es obligatorio"
+                          Validation="@( (string e) =>
+                                string.IsNullOrWhiteSpace(e) || !e.Contains("@")
+                                    ? "Email inválido"
+                                    : null )" />
+
+            <MudDivider Class="my-3" />
+
+            <MudText Typo="Typo.subtitle1">Campos personalizados</MudText>
+
+            @foreach (var field in _customFields)
+            {
+                <MudGrid Class="mb-2">
+                    <MudItem xs="5">
+                        <MudTextField Label="Nombre"
+                                      @bind-Value="field.Key" />
+                    </MudItem>
+
+                    <MudItem xs="5">
+                        <MudTextField Label="Valor"
+                                      @bind-Value="field.Value" />
+                    </MudItem>
+
+                    <MudItem xs="2" Class="d-flex align-center">
+                        <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                       Color="Color.Error"
+                                       OnClick="@(() => RemoveField(field))" />
+                    </MudItem>
+                </MudGrid>
+            }
+
+            <MudButton Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="AddField">
+                Agregar campo
+            </MudButton>
+
+        </MudForm>
     </DialogContent>
+
     <DialogActions>
         <MudButton Color="Color.Primary" OnClick="Submit">
             Guardar
@@ -52,6 +79,7 @@
     [CascadingParameter]
     public IMudDialogInstance MudDialog { get; set; } = default!;
 
+    private MudForm _form = default!;
     private CreateProviderRequest _model = new();
     private List<CustomFieldDto> _customFields = new();
 
@@ -65,23 +93,38 @@
         _customFields.Remove(field);
     }
 
-
     private async Task Submit()
     {
-        foreach (var field in _customFields)
-        {
-            if (!string.IsNullOrWhiteSpace(field.Key))
-                _model.CustomFields[field.Key] = field.Value;
-        }
+        await _form.Validate();
 
-        await Api.CreateProviderAsync(_model);
-        MudDialog.Close(DialogResult.Ok(true));
+        if (!_form.IsValid)
+            return;
+
+        try
+        {
+            _model.CustomFields.Clear();
+
+            foreach (var field in _customFields)
+            {
+                if (!string.IsNullOrWhiteSpace(field.Key))
+                    _model.CustomFields[field.Key] = field.Value;
+            }
+
+            await Api.CreateProviderAsync(_model);
+
+            Snackbar.Add("Proveedor creado correctamente", Severity.Success);
+
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Error al crear el proveedor", Severity.Error);
+        }
     }
 
     private void Cancel()
     {
-        Console.WriteLine($"Dialog instance: {MudDialog}");
-        MudDialog?.Cancel();
+        MudDialog.Cancel();
     }
 }
 

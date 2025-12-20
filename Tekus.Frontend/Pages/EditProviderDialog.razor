@@ -2,42 +2,66 @@
 @using Tekus.Frontend.Models
 @using Tekus.Frontend.Services
 @inject ProviderApiService Api
+@inject ISnackbar Snackbar
 
 <MudDialog>
 
     <DialogContent>
         <MudText Typo="Typo.h6">Editar proveedor</MudText>
 
-        <MudTextField Label="NIT" @bind-Value="_model.Nit" />
-        <MudTextField Label="Nombre" @bind-Value="_model.Name" />
-        <MudTextField Label="Email" @bind-Value="_model.Email" />
+        <MudForm @ref="_form" Model="_model">
 
-        <MudDivider Class="my-3" />
+            <MudTextField Label="NIT"
+                          @bind-Value="_model.Nit"
+                          Required="true"
+                          RequiredError="El NIT es obligatorio" />
 
-        @foreach (var field in _customFields)
-        {
-            <MudGrid>
-                <MudItem xs="5">
-                    <MudTextField Label="Campo"
-                                  @bind-Value="field.Key" />
-                </MudItem>
+            <MudTextField Label="Nombre"
+                          @bind-Value="_model.Name"
+                          Required="true"
+                          RequiredError="El nombre es obligatorio" />
 
-                <MudItem xs="5">
-                    <MudTextField Label="Valor"
-                                  @bind-Value="field.Value" />
-                </MudItem>
+            <MudTextField Label="Email"
+                          @bind-Value="_model.Email"
+                          Required="true"
+                          RequiredError="El email es obligatorio"
+                          Validation="@( (string e) =>
+                                    string.IsNullOrWhiteSpace(e) || !e.Contains("@")
+                                        ? "Email inválido"
+                                        : null)" />
 
-                <MudItem xs="2">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                   OnClick="@(() => RemoveField(field))" />
-                </MudItem>
-            </MudGrid>
-        }
+            <MudDivider Class="my-3" />
 
-        <MudButton Variant="Variant.Outlined"
-                   OnClick="AddField">
-            Agregar campo
-        </MudButton>
+            <MudText Typo="Typo.subtitle1">Campos personalizados</MudText>
+
+            @foreach (var field in _customFields)
+            {
+                <MudGrid Class="mb-2">
+                    <MudItem xs="5">
+                        <MudTextField Label="Campo"
+                                      @bind-Value="field.Key" />
+                    </MudItem>
+
+                    <MudItem xs="5">
+                        <MudTextField Label="Valor"
+                                      @bind-Value="field.Value" />
+                    </MudItem>
+
+                    <MudItem xs="2" Class="d-flex align-center">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                       Color="Color.Error"
+                                       OnClick="@(() => RemoveField(field))" />
+                    </MudItem>
+                </MudGrid>
+            }
+
+            <MudButton Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="AddField">
+                Agregar campo
+            </MudButton>
+
+        </MudForm>
     </DialogContent>
 
     <DialogActions>
@@ -59,6 +83,7 @@
     [Parameter]
     public ProviderDto Provider { get; set; } = default!;
 
+    private MudForm _form = default!;
     private UpdateProviderRequest _model = new();
     private List<CustomFieldDto> _customFields = new();
 
@@ -90,13 +115,27 @@
 
     private async Task Save()
     {
-        _model.CustomFields = _customFields
-            .Where(f => !string.IsNullOrWhiteSpace(f.Key))
-            .ToDictionary(f => f.Key, f => f.Value);
+        await _form.Validate();
 
-        await Api.UpdateProviderAsync(_model);
+        if (!_form.IsValid)
+            return;
 
-        MudDialog.Close(DialogResult.Ok(true));
+        try
+        {
+            _model.CustomFields = _customFields
+                .Where(f => !string.IsNullOrWhiteSpace(f.Key))
+                .ToDictionary(f => f.Key, f => f.Value);
+
+            await Api.UpdateProviderAsync(_model);
+
+            Snackbar.Add("Proveedor actualizado correctamente", Severity.Success);
+
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Error al actualizar el proveedor", Severity.Error);
+        }
     }
 
     private void Cancel()
