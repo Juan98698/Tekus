@@ -53,7 +53,7 @@
             <MudStack Spacing="1">
                 <MudButton Size="Size.Small"
                            Variant="Variant.Outlined"
-                           OnClick="@(() => OpenServicesDialog(context.Id))">
+                           OnClick="@(() => OpenServicesDialog(context))">
                     Ver servicios
                 </MudButton>
 
@@ -102,11 +102,13 @@
         await LoadProviders();
     }
 
-    private async Task OpenServicesDialog(Guid providerId)
+    private async Task OpenServicesDialog(ProviderDto provider)
     {
         var parameters = new DialogParameters
         {
-            ["ProviderId"] = providerId
+            ["ProviderId"] = provider.Id,
+            ["ProviderName"] = provider.Name
+            
         };
 
         var options = new DialogOptions

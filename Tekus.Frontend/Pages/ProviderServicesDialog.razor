@@ -2,10 +2,11 @@
 @using Tekus.Frontend.Services
 @inject ProviderApiService Api
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 <MudDialog>
 
     <DialogContent>
-        <MudText Typo="Typo.h6">Servicios del proveedor</MudText>
+        <MudText Typo="Typo.h6">Servicios del proveedor: @ProviderName</MudText>
 
         <MudTable T="ServiceDto"
                   @ref="_table"
@@ -53,8 +54,8 @@
 @code {
     [CascadingParameter]
     public IMudDialogInstance MudDialog { get; set; } = default!;
-
-
+    [Parameter]
+    public string ProviderName { get; set; } = string.Empty;
     [Parameter]
     public Guid ProviderId { get; set; }
     [Parameter]
@@ -110,8 +111,19 @@
 
         if (confirmed == true)
         {
-            await Api.DeleteServiceAsync(ProviderId, service.Id);
-            await _table!.ReloadServerData();
+            try
+            {
+                await Api.DeleteServiceAsync(ProviderId, service.Id);
+
+                Snackbar.Add("Servicio eliminado correctamente", Severity.Success);
+
+                await _table!.ReloadServerData();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add("Error al eliminar el servicio", Severity.Error);
+                Console.Error.WriteLine(ex);
+            }
         }
     }
 

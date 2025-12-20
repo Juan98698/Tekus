@@ -44,20 +44,31 @@ namespace Tekus.Domain.Entities
             SetName(name);
             SetEmail(email);
         }
-    
+
 
         private void SetNit(string nit)
         {
             if (string.IsNullOrWhiteSpace(nit))
                 throw new RequiredFieldException("NIT");
 
-            Nit = nit.Trim();
+            nit = nit.Trim();
+
+            if (nit.Length < 5 || nit.Length > 20)
+                throw new InvalidNitException("El NIT debe terner entre 5 y 20 caracteres");
+
+            if (!nit.Replace("-", "").All(char.IsDigit))
+                throw new InvalidNitException("El NIT solo puede contener números y guiones");
+
+            Nit = nit;
         }
 
         private void SetName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new RequiredFieldException("Nombre");
+
+            if (name.Length < 5)
+                throw new InvalidNameException("El nombre debe tener al menos 5 caracteres");
 
             Name = name.Trim();
         }
@@ -67,13 +78,15 @@ namespace Tekus.Domain.Entities
             if (string.IsNullOrWhiteSpace(email))
                 throw new RequiredFieldException("Email");
 
-            if (!email.Contains("@"))
+            email = email.Trim().ToLower();
+
+            if (!email.Contains("@") || !email.Contains("."))
                 throw new InvalidEmailException(email);
 
-            Email = email.Trim().ToLower();
+            Email = email;
         }
 
-        
+
         public void AddCustomField(string fieldName)
         {
             if (string.IsNullOrWhiteSpace(fieldName))

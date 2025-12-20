@@ -1,7 +1,7 @@
 ﻿
 @inject CountryApiService CountryApi
 @inject ProviderApiService ProviderApi
-
+@inject ISnackbar Snackbar
 @using Tekus.Frontend.Models
 @using Tekus.Frontend.Services
 
@@ -10,29 +10,35 @@
     <DialogContent>
         <MudText Typo="Typo.h6">Nuevo servicio</MudText>
 
-        <MudTextField Label="Nombre del servicio"
-                      @bind-Value="_model.Name"
-                      Required />
+        <MudForm @ref="_form" Model="_model">
 
-        <MudNumericField T="decimal"
-                         Label="Valor hora (USD)"
-                         @bind-Value="_model.HourValueUsd"
-                         Required
-                         Min="1" />
+            <MudTextField Label="Nombre del servicio"
+                          @bind-Value="_model.Name"
+                          Required="true"
+                          RequiredError="El nombre es obligatorio" />
 
-        <MudSelect T="string"
-                   Label="Países"
-                   MultiSelection
-                   SelectedValues="_model.CountryCodes"
-                   SelectedValuesChanged="v => _model.CountryCodes = v.ToHashSet()">
+            <MudNumericField T="decimal"
+                             Label="Valor hora (USD)"
+                             @bind-Value="_model.HourValueUsd"
+                             Min="0.01m"
+                             Required="true"
+                             RequiredError="El valor debe ser mayor a 0" />
 
-            @foreach (var country in _availableCountries)
-            {
-                <MudSelectItem Value="@country.Code">
-                    @country.Name
-                </MudSelectItem>
-            }
-        </MudSelect>
+            <MudSelect T="string"
+                       Label="Países"
+                       MultiSelection
+                       SelectedValues="_model.CountryCodes"
+                       SelectedValuesChanged="v => _model.CountryCodes = v.ToHashSet()">
+
+                @foreach (var country in _availableCountries)
+                {
+                    <MudSelectItem Value="@country.Code">
+                        @country.Name
+                    </MudSelectItem>
+                }
+            </MudSelect>
+
+        </MudForm>
     </DialogContent>
 
     <DialogActions>
@@ -56,7 +62,7 @@
     }
     [Parameter]
     public Guid ProviderId { get; set; }
-
+    private MudForm _form;
     private AddServiceRequest _model = new();
     private List<CountryDto> _availableCountries = new();
 
@@ -64,26 +70,41 @@
     {
         _availableCountries = await CountryApi.GetCountriesAsync();
     }
-
     private async Task Submit()
     {
-        var service = await ProviderApi.AddServiceAsync(
-            ProviderId,
-            new AddServiceRequest
-            {
-                Name = _model.Name,
-                HourValueUsd = _model.HourValueUsd
-            });
+        await _form!.Validate();
 
-        if (_model.CountryCodes.Any())
+        if (!_form.IsValid)
+            return;
+
+        try
         {
-            await ProviderApi.AssignCountriesAsync(
+            var service = await ProviderApi.AddServiceAsync(
                 ProviderId,
-                service.Id,
-                _model.CountryCodes.ToList());
-        }
+                new AddServiceRequest
+                {
+                    Name = _model.Name,
+                    HourValueUsd = _model.HourValueUsd
+                });
 
-        MudDialog.Close(DialogResult.Ok(true));
+            if (_model.CountryCodes.Any())
+            {
+                await ProviderApi.AssignCountriesAsync(
+                    ProviderId,
+                    service.Id,
+                    _model.CountryCodes.ToList());
+            }
+
+            Snackbar.Add("Servicio creado correctamente", Severity.Success);
+
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Error al guardar el servicio", Severity.Error);
+
+            Console.Error.WriteLine(ex);
+        }
     }
 
 

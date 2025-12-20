@@ -2,20 +2,25 @@
 @inject ProviderApiService ProviderApi
 @using Tekus.Frontend.Models
 @using Tekus.Frontend.Services
+@inject ISnackbar Snackbar
 
 <MudDialog>
     <DialogContent>
+                <MudForm @ref="_form" Model="_model">
+
         <MudText Typo="Typo.h6">Editar servicio</MudText>
 
-        <MudTextField Label="Nombre"
-                      @bind-Value="_model.Name"
-                      Required />
+            <MudTextField Label="Nombre"
+                          @bind-Value="_model.Name"
+                          Required="true"
+                          RequiredError="El nombre es obligatorio" />
 
-        <MudNumericField T="decimal"
-                         Label="Valor hora (USD)"
-                         @bind-Value="_model.HourValueUsd"
-                         Required
-                         Min="1" />
+            <MudNumericField T="decimal"
+                             Label="Valor hora (USD)"
+                             @bind-Value="_model.HourValueUsd"
+                             Min="0.01m"
+                             Required="true"
+                             RequiredError="Debe ser mayor a 0" />
 
         <MudSelect T="string"
                    Label="Países"
@@ -29,6 +34,7 @@
                 </MudSelectItem>
             }
         </MudSelect>
+        </MudForm>
     </DialogContent>
 
     <DialogActions>
@@ -45,6 +51,7 @@
 @code {
     [CascadingParameter]
     public IMudDialogInstance MudDialog { get; set; } = default!;
+    private MudForm _form;
 
     [Parameter] public Guid ProviderId { get; set; }
     [Parameter] public ServiceDto Service { get; set; } = default!;
@@ -70,27 +77,32 @@
 
     private async Task Submit()
     {
+        await _form.Validate();
+
+        if (!_form.IsValid)
+            return;
+
         try
         {
-            
             await ProviderApi.UpdateServiceAsync(
                 ProviderId,
                 Service.Id,
                 _model
             );
 
-           
             await ProviderApi.SyncCountriesAsync(
                 ProviderId,
                 Service.Id,
                 SelectedCountryCodes.ToList()
             );
 
-            
+            Snackbar.Add("Servicio actualizado correctamente", Severity.Success);
+
             MudDialog.Close(DialogResult.Ok(true));
         }
         catch (Exception ex)
         {
+            Snackbar.Add("Error al actualizar el servicio", Severity.Error);
             Console.Error.WriteLine(ex);
         }
     }
