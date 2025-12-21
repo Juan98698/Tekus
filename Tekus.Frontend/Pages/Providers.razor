@@ -3,7 +3,7 @@
 @page "/providers"
 @inject ProviderApiService Api
 @inject IDialogService DialogService
-
+@inject ISnackbar Snackbar
 <MudText Typo="Typo.h4">Providers</MudText>
 
 <MudButton Color="Color.Primary" OnClick="OpenCreateDialog">
@@ -164,7 +164,7 @@
         };
 
         var dialog = await DialogService.ShowAsync<CreateProviderDialog>(
-            "Create Provider",
+            "Crear Proveedor",
             options: options
         );
 
@@ -212,8 +212,21 @@
 
         if (confirmed == true)
         {
-            await Api.DeleteProviderAsync(provider.Id);
-            await LoadProviders();
+            try
+            {
+                await Api.DeleteProviderAsync(provider.Id);
+
+                Snackbar.Add(
+                    "Proveedor eliminado correctamente",
+                    Severity.Success
+                );
+
+                await LoadProviders();
+            }
+            catch (HttpRequestException ex)
+            {
+                Snackbar.Add(ex.Message, Severity.Error);
+            }
         }
     }
 }

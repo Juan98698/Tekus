@@ -22,25 +22,33 @@ namespace Tekus.API.Middlewares
             catch (NotFoundException ex) 
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                await WriteError(context, ex.Message);
+                await WriteError(context, ex.Message, "NOT_FOUND");
             }
             catch (DomainException ex) 
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                await WriteError(context, ex.Message);
+                await WriteError(context, ex.Message, "VALIDATION_ERROR");
             }
-            catch (Exception) 
+            catch (Exception)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                await WriteError(context, "Unexpected error");
+                await WriteError(context, "Ocurrió un error inesperado", "UNEXPECTED_ERROR");
             }
         }
 
-        private static async Task WriteError(HttpContext context, string message)
+        private static async Task WriteError(
+            HttpContext context,
+            string message,
+            string code)
         {
             context.Response.ContentType = "application/json";
+
             await context.Response.WriteAsync(
-                JsonSerializer.Serialize(new { error = message })
+                JsonSerializer.Serialize(new
+                {
+                    error = message,
+                    code
+                })
             );
         }
     }

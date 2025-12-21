@@ -1,7 +1,7 @@
 ﻿    using System.Net.Http;
     using System.Net.Http.Json;
     using Tekus.Frontend.Models;
-
+    using System.Text.Json;
     namespace Tekus.Frontend.Services
     {
         public class ProviderApiService
@@ -35,8 +35,8 @@
         public async Task<ProviderDto> CreateProviderAsync(CreateProviderRequest request)
             {
                 var resp = await _http.PostAsJsonAsync("api/providers", request);
-                resp.EnsureSuccessStatusCode();
-                return await resp.Content.ReadFromJsonAsync<ProviderDto>();
+            await EnsureSuccessAsync(resp);
+            return await resp.Content.ReadFromJsonAsync<ProviderDto>();
             }
 
         public async Task UpdateProviderAsync(UpdateProviderRequest provider)
@@ -46,7 +46,7 @@
                 provider
             );
 
-            response.EnsureSuccessStatusCode();
+            await EnsureSuccessAsync(response);
         }
 
         public async Task DeleteProviderAsync(Guid providerId)
@@ -55,7 +55,7 @@
                 $"api/providers/{providerId}"
             );
 
-            response.EnsureSuccessStatusCode();
+            await EnsureSuccessAsync(response);
         }
 
         public async Task UpdateServiceAsync(
@@ -68,7 +68,7 @@
                 request
             );
 
-            response.EnsureSuccessStatusCode();
+            await EnsureSuccessAsync(response);
         }
 
         public async Task DeleteServiceAsync(
@@ -79,7 +79,7 @@
                 $"api/providers/{providerId}/services/{serviceId}"
             );
 
-            response.EnsureSuccessStatusCode();
+            await EnsureSuccessAsync(response);
         }
         public async Task SyncCountriesAsync(
     Guid providerId,
@@ -91,7 +91,7 @@
                 countryCodes
             );
 
-            response.EnsureSuccessStatusCode();
+            await EnsureSuccessAsync(response);
         }
 
 
@@ -125,11 +125,47 @@
                 request
               );
 
-            response.EnsureSuccessStatusCode();
+            await EnsureSuccessAsync(response);
 
             return await response.Content.ReadFromJsonAsync<ServiceDto>()
                    ?? throw new Exception("Error creating service");
              }
+
+
+        private async Task EnsureSuccessAsync(HttpResponseMessage response)
+        {
+            if (response.IsSuccessStatusCode)
+                return;
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!string.IsNullOrWhiteSpace(content))
+            {
+                try
+                {
+                    var json = JsonDocument.Parse(content);
+
+                    if (json.RootElement.TryGetProperty("error", out var error))
+                    {
+                        throw new HttpRequestException(
+                            error.GetString(),
+                            null,
+                            response.StatusCode
+                        );
+                    }
+                }
+                catch (JsonException)
+                {
+                    // Ignorar JSON inválido
+                }
+            }
+
+                         throw new HttpRequestException(
+                         $"Error HTTP {(int)response.StatusCode}",
+                             null,
+                                 response.StatusCode
+                                );
+        }
 
     }
     }

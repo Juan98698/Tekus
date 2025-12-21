@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Tekus.API.Middlewares;
 using Tekus.API.Security;
@@ -6,6 +7,7 @@ using Tekus.Application;
 using Tekus.Application.DependencyInjection;
 using Tekus.Application.Interfaces.Services;
 using Tekus.Application.UseCases.Services;
+using Tekus.Domain.Exceptions;
 using Tekus.Infrastructure.DI;
 using Tekus.Infrastructure.ExternalServices;
 using Tekus.Infrastructure.Persistence.Context;

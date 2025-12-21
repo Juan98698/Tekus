@@ -154,5 +154,10 @@ namespace Tekus.Infrastructure.Persistence
                     .ThenInclude(s => s.Countries)
                 .ToListAsync();
         }
+        public async Task<Provider?> GetByEmailAsync(string email)
+        {
+            return await _context.Providers
+                .FirstOrDefaultAsync(p => p.Email == email);
+        }
     }
 }

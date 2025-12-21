@@ -19,6 +19,7 @@ namespace Tekus.Application.Interfaces.Repositories
         Task DeleteAsync(Provider provider);
         Task<List<Provider>> GetAllAsync();
         Task<PagedResult<Service>> GetServicesByProviderAsync(Guid providerId,PagedRequest request);
+        Task<Provider> GetByEmailAsync(string email);
 
 
 

@@ -7,7 +7,7 @@
 <MudDialog>
 
     <DialogContent>
-        <MudText Typo="Typo.h6">Editar proveedor</MudText>
+        
 
         <MudForm @ref="_form" Model="_model">
 
@@ -65,8 +65,10 @@
     </DialogContent>
 
     <DialogActions>
-        <MudButton Color="Color.Primary" OnClick="Save">
-            Guardar
+        <MudButton Color="Color.Primary"
+                   Disabled="_isSubmitting"
+                   OnClick="Save">
+            @(_isSubmitting ? "Guardando..." : "Guardar")
         </MudButton>
 
         <MudButton Color="Color.Secondary" OnClick="Cancel">
@@ -112,29 +114,37 @@
     {
         _customFields.Remove(field);
     }
-
+    private bool _isSubmitting = false;
     private async Task Save()
     {
         await _form.Validate();
-
         if (!_form.IsValid)
             return;
 
+        _isSubmitting = true;
+
         try
         {
-            _model.CustomFields = _customFields
-                .Where(f => !string.IsNullOrWhiteSpace(f.Key))
-                .ToDictionary(f => f.Key, f => f.Value);
+            _model.CustomFields.Clear();
+
+            foreach (var field in _customFields)
+            {
+                if (!string.IsNullOrWhiteSpace(field.Key))
+                    _model.CustomFields[field.Key] = field.Value;
+            }
 
             await Api.UpdateProviderAsync(_model);
 
-            Snackbar.Add("Proveedor actualizado correctamente", Severity.Success);
-
+            Snackbar.Add("Proveedor Actualizado correctamente", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception)
+        catch (HttpRequestException ex)
         {
-            Snackbar.Add("Error al actualizar el proveedor", Severity.Error);
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+        finally
+        {
+            _isSubmitting = false;
         }
     }
 

@@ -8,8 +8,8 @@ namespace Tekus.Domain.Exceptions
 {
     public class InvalidNitException : DomainException
     {
-        public InvalidNitException(string nit)
-            : base($"El NIT '{nit}' no tiene un formato válido")
+        public InvalidNitException(string message)
+            : base(message)
         {
         }
     }

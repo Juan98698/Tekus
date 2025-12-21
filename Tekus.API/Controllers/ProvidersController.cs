@@ -57,14 +57,27 @@ namespace Tekus.API.Controllers
 
 
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProviderRequest request)
         {
+            Console.WriteLine("🟢 Entró al endpoint Create");
+
+            if (request == null)
+            {
+                Console.WriteLine("🔴 Request es NULL");
+                return BadRequest("Request null");
+            }
+
+            Console.WriteLine($"NIT: {request.Nit}");
+            Console.WriteLine($"Name: {request.Name}");
+            Console.WriteLine($"Email: {request.Email}");
+            Console.WriteLine($"CustomFields null?: {request.CustomFields == null}");
+
             var result = await _createProviderUseCase.ExecuteAsync(request);
             return CreatedAtAction(nameof(Create), new { id = result.Id }, result);
         }
-       
+
         [HttpGet]
         public async Task<IActionResult> GetProviders([FromQuery] PagedRequest request)
         {

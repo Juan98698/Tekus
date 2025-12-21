@@ -21,7 +21,19 @@ namespace Tekus.Application.UseCases.Providers
         public async Task ExecuteAsync(UpdateProviderRequest request)
         {
             var provider = await _repository.GetByIdAsync(request.Id)
-                ?? throw new NotFoundException("Provider");
+            ?? throw new NotFoundException("Proveedor");
+
+            var existing = await _repository.GetByNitAsync(request.Nit);
+            if (existing != null && existing.Id != request.Id)
+                throw new DuplicateEntityException(
+                    "Ya existe un proveedor con este NIT"
+                );
+
+            var existingByEmail = await _repository.GetByEmailAsync(request.Email);
+            if (existingByEmail != null && existingByEmail.Id != request.Id)
+                throw new DuplicateEntityException("Ya existe un proveedor con este email");
+
+
 
             provider.UpdateBasicInfo(request.Nit, request.Name, request.Email);
 

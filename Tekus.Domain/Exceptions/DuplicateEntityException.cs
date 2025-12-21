@@ -8,8 +8,8 @@ namespace Tekus.Domain.Exceptions
 {
     public class DuplicateEntityException : DomainException
     {
-        public DuplicateEntityException(string entityName)
-            : base($"{entityName} ya existe")
+        public DuplicateEntityException(string message)
+            : base(message)
         {
         }
     }

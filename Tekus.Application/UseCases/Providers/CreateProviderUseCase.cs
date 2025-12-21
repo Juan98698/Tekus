@@ -21,9 +21,13 @@ namespace Tekus.Application.UseCases.Providers
 
         public async Task<ProviderResponse> ExecuteAsync(CreateProviderRequest request)
         {
-            var existing = await _repository.GetByNitAsync(request.Nit);
-            if (existing != null)
-                throw new DuplicateEntityException("Provider");
+            var existingByNit = await _repository.GetByNitAsync(request.Nit);
+            if (existingByNit != null)
+                throw new DuplicateEntityException("Ya existe un proveedor con este NIT");
+
+            var existingByEmail = await _repository.GetByEmailAsync(request.Email);
+            if (existingByEmail != null)
+                throw new DuplicateEntityException("Ya existe un proveedor con este email");
 
             var provider = new Provider(request.Nit, request.Name, request.Email);
 
@@ -35,6 +39,8 @@ namespace Tekus.Application.UseCases.Providers
                     provider.AssignCustomFieldValue(field.Key, field.Value);
                 }
             }
+
+          
 
             await _repository.AddAsync(provider);
 

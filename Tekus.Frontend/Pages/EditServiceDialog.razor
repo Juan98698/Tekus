@@ -8,7 +8,7 @@
     <DialogContent>
                 <MudForm @ref="_form" Model="_model">
 
-        <MudText Typo="Typo.h6">Editar servicio</MudText>
+        
 
             <MudTextField Label="Nombre"
                           @bind-Value="_model.Name"
@@ -38,8 +38,10 @@
     </DialogContent>
 
     <DialogActions>
-        <MudButton Color="Color.Primary" OnClick="Submit">
-            Guardar
+        <MudButton Color="Color.Primary"
+                   Disabled="_isSubmitting"
+                   OnClick="Submit">
+            @(_isSubmitting ? "Guardando..." : "Guardar")
         </MudButton>
 
         <MudButton Color="Color.Secondary" OnClick="Cancel">
@@ -74,36 +76,37 @@
             .Select(c => c.Code)
             .ToHashSet();
     }
-
+    private bool _isSubmitting = false;
     private async Task Submit()
     {
         await _form.Validate();
-
         if (!_form.IsValid)
             return;
+
+        _isSubmitting = true;
 
         try
         {
             await ProviderApi.UpdateServiceAsync(
                 ProviderId,
                 Service.Id,
-                _model
-            );
+                _model);
 
             await ProviderApi.SyncCountriesAsync(
                 ProviderId,
                 Service.Id,
-                SelectedCountryCodes.ToList()
-            );
+                SelectedCountryCodes.ToList());
 
             Snackbar.Add("Servicio actualizado correctamente", Severity.Success);
-
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        catch (HttpRequestException ex)
         {
-            Snackbar.Add("Error al actualizar el servicio", Severity.Error);
-            Console.Error.WriteLine(ex);
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+        finally
+        {
+            _isSubmitting = false;
         }
     }
 
