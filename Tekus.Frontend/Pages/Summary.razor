@@ -7,44 +7,90 @@
 
 <MudDivider Class="my-4" />
 
-<MudGrid Class="mb-4">
+<MudGrid Class="mb-6">
 
-    <MudItem xs="12" md="3">
-        <MudPaper Class="pa-4 text-center">
-            <MudText Typo="Typo.h6">Países</MudText>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Elevation="3" Class="pa-4 text-center">
+            <MudText Typo="Typo.subtitle2">Países</MudText>
             <MudText Typo="Typo.h4" Color="Color.Primary">
-                @TotalCountriesWithServices
+                @_summary.ServicesByCountry.Count
             </MudText>
         </MudPaper>
     </MudItem>
 
-    <MudItem xs="12" md="3">
-        <MudPaper Class="pa-4 text-center">
-            <MudText Typo="Typo.h6">Servicios</MudText>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Elevation="3" Class="pa-4 text-center">
+            <MudText Typo="Typo.subtitle2">Servicios</MudText>
             <MudText Typo="Typo.h4" Color="Color.Secondary">
-                @TotalServices
+                @_summary.ServicesByCountry.Sum(x => x.ServicesCount)
             </MudText>
         </MudPaper>
     </MudItem>
 
-    <MudItem xs="12" md="3">
-        <MudPaper Class="pa-4 text-center">
-            <MudText Typo="Typo.h6">Proveedores</MudText>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Elevation="3" Class="pa-4 text-center">
+            <MudText Typo="Typo.subtitle2">Proveedores</MudText>
             <MudText Typo="Typo.h4" Color="Color.Info">
-                @TotalProviders
+                @_summary.ProvidersByCountry.Sum(x => x.ProvidersCount)
             </MudText>
         </MudPaper>
     </MudItem>
 
-    <MudItem xs="12" md="3">
-        <MudPaper Class="pa-4 text-center">
-            <MudText Typo="Typo.h6">Top país (servicios)</MudText>
-            <MudText Typo="Typo.subtitle1">
-                @TopServiceCountry?.CountryName
-            </MudText>
-            <MudText Typo="Typo.h6" Color="Color.Success">
-                @TopServiceCountry?.ServicesCount
-            </MudText>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Elevation="3" Class="pa-4 text-center">
+            <MudText Typo="Typo.subtitle2">Top país (servicios)</MudText>
+
+            @if (_summary.ServicesByCountry.Any())
+            {
+                var top = _summary.ServicesByCountry.First();
+
+                <MudText Typo="Typo.body1">@top.CountryName</MudText>
+                <MudText Typo="Typo.h5" Color="Color.Success">
+                    @top.ServicesCount
+                </MudText>
+            }
+        </MudPaper>
+    </MudItem>
+
+</MudGrid>
+
+<MudGrid Class="mb-6">
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6">Top 3 países con mas servicios</MudText>
+
+            <MudList T="CountryServicesSummaryDto" Dense="true">
+                @foreach (var item in Top3Services)
+                {
+                    <MudListItem T="CountryServicesSummaryDto">
+                        <MudText>@item.CountryName</MudText>
+                        <MudSpacer />
+                        <MudChip T="int" Color="Color.Success" Size="Size.Small">
+                            @item.ServicesCount
+                        </MudChip>
+                    </MudListItem>
+                }
+            </MudList>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6">Top 3 países con mas proveedores</MudText>
+
+            <MudList T="CountryProvidersSummaryDto" Dense="true">
+                @foreach (var item in Top3Providers)
+                {
+                    <MudListItem T="CountryProvidersSummaryDto">
+                        <MudText>@item.CountryName</MudText>
+                        <MudSpacer />
+                        <MudChip T="int" Color="Color.Info" Size="Size.Small">
+                            @item.ProvidersCount
+                        </MudChip>
+                    </MudListItem>
+                }
+            </MudList>
         </MudPaper>
     </MudItem>
 
@@ -94,7 +140,15 @@
 
 @code {
     private SummaryResponse _summary = new();
+    private IEnumerable<CountryServicesSummaryDto> Top3Services =>
+        _summary.ServicesByCountry
+            .OrderByDescending(x => x.ServicesCount)
+            .Take(3);
 
+    private IEnumerable<CountryProvidersSummaryDto> Top3Providers =>
+        _summary.ProvidersByCountry
+            .OrderByDescending(x => x.ProvidersCount)
+            .Take(3);
     protected override async Task OnInitializedAsync()
     {
         _summary = await Api.GetSummaryAsync();
