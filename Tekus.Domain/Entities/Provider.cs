@@ -58,10 +58,10 @@ namespace Tekus.Domain.Entities
                     "El NIT debe tener entre 5 y 20 caracteres"
                 );
 
-            if (!nit.Replace("-", "").All(char.IsDigit))
-                throw new InvalidNitException(
-                    "El NIT solo puede contener números y guiones"
-                );
+                if (!nit.Replace("-", "").All(char.IsDigit))
+                    throw new InvalidNitException(
+                        "El NIT solo puede contener números y guiones"
+                    );
 
             Nit = nit;
         }

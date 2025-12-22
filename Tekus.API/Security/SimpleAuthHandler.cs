@@ -5,7 +5,8 @@ using Microsoft.Extensions.Options;
 
 namespace Tekus.API.Security
 {
-    public class SimpleAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+    public class SimpleAuthHandler
+        : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         public SimpleAuthHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -13,11 +14,18 @@ namespace Tekus.API.Security
             UrlEncoder encoder,
             ISystemClock clock)
             : base(options, logger, encoder, clock)
-        { }
+        {
+        }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var claims = new[] { new Claim(ClaimTypes.Name, "default-user") };
+            // Usuario por defecto
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, "default-user"),
+                new Claim(ClaimTypes.Role, "Admin")
+            };
+
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);

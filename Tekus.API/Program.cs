@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Tekus.API.Middlewares;
@@ -47,7 +47,6 @@ builder.Services.AddAuthentication("Default")
     .AddScheme<AuthenticationSchemeOptions, SimpleAuthHandler>(
         "Default", null);
 
-builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<TekusDbContext>(options =>
     options.UseSqlServer(
@@ -56,9 +55,7 @@ builder.Services.AddDbContext<TekusDbContext>(options =>
 );
 
 var app = builder.Build();
-app.UseCors("AllowDev");
 
-app.UseDeveloperExceptionPage();
 
 
  //Middlewares
@@ -71,6 +68,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowDev");
+
 
 app.UseAuthentication();
 app.UseAuthorization();

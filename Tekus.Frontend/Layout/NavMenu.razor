@@ -13,15 +13,23 @@
     <nav class="nav flex-column">
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                Home
-            </NavLink>
-        </div>
+            <MudNavMenu>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/providers">
-                Providers
-            </NavLink>
+                <MudNavLink Href="/providers"
+                            Match="NavLinkMatch.All"
+                            Icon="@Icons.Material.Filled.Business"
+                            Color="Color.Primary">
+                    Providers
+                </MudNavLink>
+
+                <MudNavLink Href="/summary"
+                            Match="NavLinkMatch.All"
+                            Icon="@Icons.Material.Filled.Dashboard"
+                            Color="Color.Primary">
+                    Resumen
+                </MudNavLink>
+
+            </MudNavMenu>
         </div>
 
     </nav>

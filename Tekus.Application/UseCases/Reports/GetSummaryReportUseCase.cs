@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Tekus.Application.Common;
 using Tekus.Application.DTOs.Reports;
 using Tekus.Application.Interfaces.Repositories;
 
@@ -21,7 +17,6 @@ namespace Tekus.Application.UseCases.Reports
         {
             var providers = await _providerRepository.GetAllAsync();
 
-            // Servicios por país
             var servicesByCountry = providers
                 .SelectMany(p => p.Services)
                 .SelectMany(s => s.Countries)
@@ -34,18 +29,18 @@ namespace Tekus.Application.UseCases.Reports
                 .OrderByDescending(x => x.Count)
                 .ToList();
 
-            // Proveedores por país
             var providersByCountry = providers
-                .SelectMany(p => p.Services)
-                .SelectMany(s => s.Countries)
-                .GroupBy(c => c.Code)
+                .SelectMany(p =>
+                    p.Services
+                     .SelectMany(s => s.Countries)
+                     .Select(c => new { p.Id, c.Code })
+                     .Distinct()
+                )
+                .GroupBy(x => x.Code)
                 .Select(g => new CountryCountResponse
                 {
                     CountryCode = g.Key,
-                    Count = g
-                        .Select(sc => sc) // país
-                        .Distinct()
-                        .Count()
+                    Count = g.Select(x => x.Id).Distinct().Count()
                 })
                 .OrderByDescending(x => x.Count)
                 .ToList();
@@ -54,6 +49,27 @@ namespace Tekus.Application.UseCases.Reports
             {
                 ServicesByCountry = servicesByCountry,
                 ProvidersByCountry = providersByCountry
+            };
+        }
+
+        // ==============================
+        // 🔧 MÉTODO DE ORDENAMIENTO
+        // ==============================
+        private static IQueryable<CountryCountResponse> ApplyOrdering(
+            IQueryable<CountryCountResponse> query,
+            PagedRequest request)
+        {
+            return request.OrderBy?.ToLower() switch
+            {
+                "countrycode" =>
+                    request.OrderAsc
+                        ? query.OrderBy(x => x.CountryCode)
+                        : query.OrderByDescending(x => x.CountryCode),
+
+                "count" or _ =>
+                    request.OrderAsc
+                        ? query.OrderBy(x => x.Count)
+                        : query.OrderByDescending(x => x.Count)
             };
         }
     }

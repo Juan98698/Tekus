@@ -19,19 +19,25 @@ namespace Tekus.API.Middlewares
             {
                 await _next(context);
             }
-            catch (NotFoundException ex) 
+            catch (NotFoundException ex)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                if (context.Response.HasStarted) throw;
+
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
                 await WriteError(context, ex.Message, "NOT_FOUND");
             }
-            catch (DomainException ex) 
+            catch (DomainException ex)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                if (context.Response.HasStarted) throw;
+
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await WriteError(context, ex.Message, "VALIDATION_ERROR");
             }
             catch (Exception)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                if (context.Response.HasStarted) throw;
+
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 await WriteError(context, "Ocurrió un error inesperado", "UNEXPECTED_ERROR");
             }
         }

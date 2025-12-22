@@ -3,46 +3,118 @@
 @using Tekus.Frontend.Services
 @using Tekus.Frontend.Models.Summary;
 
+<MudText Typo="Typo.h4">Resumen general</MudText>
 
-<MudText Typo="Typo.h4">Dashboard</MudText>
+<MudDivider Class="my-4" />
 
-<MudPaper Class="pa-4">
+<MudGrid Class="mb-4">
 
-    <MudText Typo="Typo.h6">Services by Country</MudText>
+    <MudItem xs="12" md="3">
+        <MudPaper Class="pa-4 text-center">
+            <MudText Typo="Typo.h6">Países</MudText>
+            <MudText Typo="Typo.h4" Color="Color.Primary">
+                @TotalCountriesWithServices
+            </MudText>
+        </MudPaper>
+    </MudItem>
 
-    <MudTable Items="_model.ServicesByCountry">
-        <HeaderContent>
-            <MudTh>Country</MudTh>
-            <MudTh>Services</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd>@context.CountryName</MudTd>
-            <MudTd>@context.ServicesCount</MudTd>
-        </RowTemplate>
-    </MudTable>
+    <MudItem xs="12" md="3">
+        <MudPaper Class="pa-4 text-center">
+            <MudText Typo="Typo.h6">Servicios</MudText>
+            <MudText Typo="Typo.h4" Color="Color.Secondary">
+                @TotalServices
+            </MudText>
+        </MudPaper>
+    </MudItem>
 
-    <MudDivider Class="my-4" />
+    <MudItem xs="12" md="3">
+        <MudPaper Class="pa-4 text-center">
+            <MudText Typo="Typo.h6">Proveedores</MudText>
+            <MudText Typo="Typo.h4" Color="Color.Info">
+                @TotalProviders
+            </MudText>
+        </MudPaper>
+    </MudItem>
 
-    <MudText Typo="Typo.h6">Providers by Country</MudText>
+    <MudItem xs="12" md="3">
+        <MudPaper Class="pa-4 text-center">
+            <MudText Typo="Typo.h6">Top país (servicios)</MudText>
+            <MudText Typo="Typo.subtitle1">
+                @TopServiceCountry?.CountryName
+            </MudText>
+            <MudText Typo="Typo.h6" Color="Color.Success">
+                @TopServiceCountry?.ServicesCount
+            </MudText>
+        </MudPaper>
+    </MudItem>
 
-    <MudTable Items="_model.ProvidersByCountry">
-        <HeaderContent>
-            <MudTh>Country</MudTh>
-            <MudTh>Providers</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd>@context.CountryName</MudTd>
-            <MudTd>@context.ProvidersCount</MudTd>
-        </RowTemplate>
-    </MudTable>
+</MudGrid>
 
-</MudPaper>
+<MudGrid>
+
+    <!-- SERVICIOS POR PAÍS -->
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6">Servicios por país</MudText>
+
+            <MudTable Items="_summary.ServicesByCountry" Dense="true">
+                <HeaderContent>
+                    <MudTh>País</MudTh>
+                    <MudTh>Cantidad</MudTh>
+                </HeaderContent>
+
+                <RowTemplate>
+                    <MudTd>@context.CountryName</MudTd>
+                    <MudTd>@context.ServicesCount</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudPaper>
+    </MudItem>
+
+    <!-- PROVEEDORES POR PAÍS -->
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6">Proveedores por país</MudText>
+
+            <MudTable Items="_summary.ProvidersByCountry" Dense="true">
+                <HeaderContent>
+                    <MudTh>País</MudTh>
+                    <MudTh>Cantidad</MudTh>
+                </HeaderContent>
+
+                <RowTemplate>
+                    <MudTd>@context.CountryName</MudTd>
+                    <MudTd>@context.ProvidersCount</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudPaper>
+    </MudItem>
+
+</MudGrid>
 
 @code {
-    private SummaryResponse _model = new();
+    private SummaryResponse _summary = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _model = await Api.GetSummaryAsync();
+        _summary = await Api.GetSummaryAsync();
     }
+    private int TotalCountriesWithServices =>
+    _summary.ServicesByCountry.Count;
+
+    private int TotalServices =>
+        _summary.ServicesByCountry.Sum(x => x.ServicesCount);
+
+    private int TotalProviders =>
+        _summary.ProvidersByCountry.Sum(x => x.ProvidersCount);
+
+    private CountryServicesSummaryDto TopServiceCountry =>
+        _summary.ServicesByCountry
+            .OrderByDescending(x => x.ServicesCount)
+            .FirstOrDefault();
+
+    private CountryProvidersSummaryDto TopProviderCountry =>
+        _summary.ProvidersByCountry
+            .OrderByDescending(x => x.ProvidersCount)
+            .FirstOrDefault();
 }

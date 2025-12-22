@@ -57,26 +57,14 @@ namespace Tekus.API.Controllers
 
 
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProviderRequest request)
         {
-            Console.WriteLine("🟢 Entró al endpoint Create");
-
-            if (request == null)
-            {
-                Console.WriteLine("🔴 Request es NULL");
-                return BadRequest("Request null");
-            }
-
-            Console.WriteLine($"NIT: {request.Nit}");
-            Console.WriteLine($"Name: {request.Name}");
-            Console.WriteLine($"Email: {request.Email}");
-            Console.WriteLine($"CustomFields null?: {request.CustomFields == null}");
-
             var result = await _createProviderUseCase.ExecuteAsync(request);
             return CreatedAtAction(nameof(Create), new { id = result.Id }, result);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetProviders([FromQuery] PagedRequest request)
@@ -85,6 +73,24 @@ namespace Tekus.API.Controllers
             return Ok(result);
         }
 
+
+        [Authorize]
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update(Guid id, UpdateProviderRequest request)
+        {
+            request.Id = id;
+            await _updateProviderUseCase.ExecuteAsync(request);
+            return NoContent();
+        }
+        [Authorize]
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _deleteProviderUseCase.ExecuteAsync(id);
+            return NoContent();
+        }
+        //Endpoints de servicios por proveedor
+        [Authorize]
         [HttpPost("{id:guid}/services")]
         public async Task<IActionResult> AddService(
          Guid id,
@@ -94,50 +100,13 @@ namespace Tekus.API.Controllers
 
             var result = await _addServiceToProviderUseCase.ExecuteAsync(request);
 
-            return Ok(result); 
-        }
-
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, UpdateProviderRequest request)
-        {
-            request.Id = id;
-            await _updateProviderUseCase.ExecuteAsync(request);
-            return NoContent();
-        }
-
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            await _deleteProviderUseCase.ExecuteAsync(id);
-            return NoContent();
-        }
-        //Endpoints de servicios por proveedor
-  
-
-        [HttpPut("{providerId:guid}/services/{serviceId:guid}")]
-        public async Task<IActionResult> UpdateService(
-        Guid providerId,
-        Guid serviceId,
-        UpdateServiceRequest request)
-        {
-            request.ProviderId = providerId;
-            request.ServiceId = serviceId;
-
-            await _updateServiceUseCase.ExecuteAsync(request);
-            return NoContent();
-        }
-
-        [HttpDelete("{providerId:guid}/services/{serviceId:guid}")]
-        public async Task<IActionResult> DeleteService(Guid providerId, Guid serviceId)
-        {
-            await _deleteServiceUseCase.ExecuteAsync(providerId, serviceId);
-            return NoContent();
+            return Ok(result);
         }
 
         [HttpGet("{providerId:guid}/services")]
         public async Task<IActionResult> GetServices(
-    Guid providerId,
-    [FromQuery] PagedRequest request)
+         Guid providerId,
+        [FromQuery] PagedRequest request)
         {
             var result =
                 await _listServicesByProviderPagedUseCase.ExecuteAsync(providerId, request);
@@ -161,8 +130,31 @@ namespace Tekus.API.Controllers
             });
         }
 
-        //Endpints con Country
+        [Authorize]
+        [HttpPut("{providerId:guid}/services/{serviceId:guid}")]
+        public async Task<IActionResult> UpdateService(
+        Guid providerId,
+        Guid serviceId,
+        UpdateServiceRequest request)
+        {
+            request.ProviderId = providerId;
+            request.ServiceId = serviceId;
 
+            await _updateServiceUseCase.ExecuteAsync(request);
+            return NoContent();
+        }
+        [Authorize]
+        [HttpDelete("{providerId:guid}/services/{serviceId:guid}")]
+        public async Task<IActionResult> DeleteService(Guid providerId, Guid serviceId)
+        {
+            await _deleteServiceUseCase.ExecuteAsync(providerId, serviceId);
+            return NoContent();
+        }
+
+
+
+        //Endpints con Country
+        [Authorize]
         [HttpPost("{providerId:guid}/services/{serviceId:guid}/countries")]
         public async Task<IActionResult> AssignCountries(
         Guid providerId,
@@ -179,26 +171,11 @@ namespace Tekus.API.Controllers
             return NoContent();
         }
 
-        [HttpPut("{providerId:guid}/services/{serviceId:guid}/countries")]
-        public async Task<IActionResult> SyncCountries(
-            Guid providerId,
-            Guid serviceId,
-            [FromBody] List<string> countryCodes)
-        {
-            await _syncCountriesToServiceUseCase.ExecuteAsync(new SyncCountriesToServiceRequest
-            {
-                ProviderId = providerId,
-                ServiceId = serviceId,
-                CountryCodes = countryCodes
-            });
-
-            return NoContent();
-        }
-
+        [Authorize]
         [HttpGet("{providerId:guid}/services/{serviceId:guid}")]
         public async Task<IActionResult> GetServiceById(
-    Guid providerId,
-    Guid serviceId)
+         Guid providerId,
+        Guid serviceId)
         {
             var provider = await _providerRepository.GetByIdAsync(providerId);
 
@@ -222,5 +199,23 @@ namespace Tekus.API.Controllers
                 }).ToList()
             });
         }
+        [Authorize]
+        [HttpPut("{providerId:guid}/services/{serviceId:guid}/countries")]
+        public async Task<IActionResult> SyncCountries(
+            Guid providerId,
+            Guid serviceId,
+            [FromBody] List<string> countryCodes)
+        {
+            await _syncCountriesToServiceUseCase.ExecuteAsync(new SyncCountriesToServiceRequest
+            {
+                ProviderId = providerId,
+                ServiceId = serviceId,
+                CountryCodes = countryCodes
+            });
+
+            return NoContent();
+        }
+
+        
     }
 }
