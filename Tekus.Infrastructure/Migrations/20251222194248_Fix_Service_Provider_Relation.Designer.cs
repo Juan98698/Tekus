@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tekus.Infrastructure.Persistence.Context;
 
@@ -11,9 +12,11 @@ using Tekus.Infrastructure.Persistence.Context;
 namespace Tekus.Infrastructure.Migrations
 {
     [DbContext(typeof(TekusDbContext))]
-    partial class TekusDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251222194248_Fix_Service_Provider_Relation")]
+    partial class Fix_Service_Provider_Relation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

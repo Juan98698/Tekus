@@ -25,6 +25,12 @@ namespace Tekus.Infrastructure.Persistence.Configurations
             builder.Property(s => s.HourValueUsd)
                    .HasPrecision(18, 2);
 
+            builder.HasOne(s => s.Provider)
+                    .WithMany(p => p.Services)
+                    .HasForeignKey(s => s.ProviderId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
+
             // Owned Value Object: Countries
             builder.OwnsMany(s => s.Countries, cb =>
             {

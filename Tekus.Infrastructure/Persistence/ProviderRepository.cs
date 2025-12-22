@@ -28,8 +28,8 @@ namespace Tekus.Infrastructure.Persistence
 
         public async Task UpdateAsync(Provider provider)
         {
-           
 
+            _context.Providers.Update(provider);
             await _context.SaveChangesAsync();
         }
 

@@ -16,6 +16,9 @@ namespace Tekus.Domain.Entities
         public string Name { get; private set; }
         public decimal HourValueUsd { get; private set; }
 
+        public Guid ProviderId { get; private set; }
+        public Provider Provider { get; private set; }
+
         private readonly List<Country> _countries = new();
         public IReadOnlyCollection<Country> Countries => _countries;
 

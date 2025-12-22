@@ -23,7 +23,8 @@ namespace Tekus.Infrastructure.Persistence.Configurations
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.Id)
-                   .IsRequired();
+                   .IsRequired()
+                   .ValueGeneratedOnAdd();
 
             builder.Property(p => p.Nit)
                    .IsRequired()
