@@ -34,13 +34,22 @@ namespace Tekus.Frontend.Services
         }
 
         public async Task<PagedResult<ServiceDto>> GetServicesByProviderAsync(
-        Guid providerId,
-        int page = 1,
-        int pageSize = 10)
+         Guid providerId,
+         int page,
+         int pageSize,
+         string search,
+         string orderBy,
+         bool orderAsc)
         {
-            return await _http.GetFromJsonAsync<PagedResult<ServiceDto>>(
-                $"api/providers/{providerId}/services?page={page}&pageSize={pageSize}"
-            ) ?? new();
+            var url =
+                $"api/providers/{providerId}/services?" +
+                $"page={page}&pageSize={pageSize}" +
+                $"&search={search}" +
+                $"&orderBy={orderBy}" +
+                $"&orderAsc={orderAsc}";
+
+            return await _http.GetFromJsonAsync<PagedResult<ServiceDto>>(url)
+                   ?? new();
         }
 
 

@@ -13,6 +13,7 @@ namespace Tekus.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Service> builder)
         {
+            builder.ToTable("Service");
             builder.HasKey(s => s.Id);
 
             builder.Property(s => s.Id)

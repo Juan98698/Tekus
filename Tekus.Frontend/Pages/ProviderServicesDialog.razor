@@ -8,23 +8,51 @@
     <DialogContent>
         <MudText Typo="Typo.h6">Servicios del proveedor @ProviderName</MudText>
 
+        <MudTextField @bind-Value="_search"
+                      Placeholder="Buscar servicio"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      OnKeyDown="OnSearchKeyDown"
+                      Class="mb-3" />
+
         <MudTable T="ServiceDto"
                   @ref="_table"
                   ServerData="LoadServerData"
-                  RowsPerPage="_pageSize">
+                  RowsPerPage="10"
+                  Dense="true"
+                  Hover="true">
 
             <HeaderContent>
-                <MudTh>Nombre</MudTh>
-                <MudTh>Valor hora (USD)</MudTh>
-                <MudTh>País(es)</MudTh>
+                <MudTh>
+                    <MudTableSortLabel T="ServiceDto" SortLabel="name">
+                        Nombre
+                    </MudTableSortLabel>
+                </MudTh>
+
+                <MudTh>
+                    <MudTableSortLabel T="ServiceDto" SortLabel="hourvalueUsd">
+                        Valor Hora (USD)
+                    </MudTableSortLabel>
+                </MudTh>
+
+                <MudTh>Países</MudTh>
                 <MudTh>Acciones</MudTh>
             </HeaderContent>
-
             <RowTemplate>
                 <MudTd>@context.Name</MudTd>
                 <MudTd>@context.HourValueUsd</MudTd>
+
                 <MudTd>
-                    @string.Join(", ", context.Countries.Select(c => c.Name))
+                    @if (context.Countries.Any())
+                    {
+                        @string.Join(", ", context.Countries.Select(c => c.Name))
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">—</MudText>
+                    }
                 </MudTd>
 
                 <MudTd>
@@ -39,6 +67,10 @@
                     </MudStack>
                 </MudTd>
             </RowTemplate>
+
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[] { 5, 10, 20 }" />
+            </PagerContent>
 
         </MudTable>
     </DialogContent>
@@ -61,23 +93,38 @@
     [Parameter]
     public Guid ServiceId { get; set; }
     private MudTable<ServiceDto> _table;
-
-    private int _pageSize = 10;
-    private UpdateServiceRequest _model = new();
-    private HashSet<string> SelectedCountryCodes = new();
+    private string _search = string.Empty;  
+   /* private UpdateServiceRequest _model = new();
+     private HashSet<string> SelectedCountryCodes = new();*/
     private async Task<TableData<ServiceDto>> LoadServerData(
-        TableState state,
-        CancellationToken token)
+     TableState state,
+     CancellationToken token)
     {
         var page = state.Page + 1;
+        var pageSize = state.PageSize;
+
+        var orderBy = state.SortLabel;
+        var orderAsc = state.SortDirection != SortDirection.Descending;
+
         var result = await Api.GetServicesByProviderAsync(
-            ProviderId, page, state.PageSize);
+            ProviderId,
+            page,
+            pageSize,
+            _search,
+            orderBy,
+            orderAsc
+        );
 
         return new TableData<ServiceDto>
         {
             Items = result.Items,
             TotalItems = result.TotalItems
         };
+    }
+    private async Task OnSearchKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && _table is not null)
+            await _table.ReloadServerData();
     }
     private async Task OpenEditServiceDialog(ServiceDto service)
     {

@@ -5,7 +5,7 @@
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public decimal HourValueUsd { get; set; }
-
+        public string ProviderName { get; set; } = string.Empty;
         public List<CountryDto> Countries { get; set; } = new();
     }
 }

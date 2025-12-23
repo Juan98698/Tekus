@@ -120,29 +120,13 @@ namespace Tekus.API.Controllers
 
         [HttpGet("{providerId:guid}/services")]
         public async Task<IActionResult> GetServices(
-         Guid providerId,
+        Guid providerId,
         [FromQuery] PagedRequest request)
         {
             var result =
                 await _listServicesByProviderPagedUseCase.ExecuteAsync(providerId, request);
 
-            return Ok(new PagedResult<ServiceListItemResponse>
-            {
-                Page = result.Page,
-                PageSize = result.PageSize,
-                TotalItems = result.TotalItems,
-                Items = result.Items.Select(s => new ServiceListItemResponse
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    HourValueUsd = s.HourValueUsd,
-                    Countries = s.Countries.Select(c => new CountryResponse
-                    {
-                        Code = c.Code,
-                        Name = c.Name
-                    }).ToList()
-                }).ToList()
-            });
+            return Ok(result);
         }
 
         [Authorize]

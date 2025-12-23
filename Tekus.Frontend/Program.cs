@@ -15,5 +15,6 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddMudServices();
 builder.Services.AddScoped<CountryApiService>();
 builder.Services.AddScoped<ProviderApiService>();
+builder.Services.AddScoped<ServiceApiService>();
 builder.Services.AddScoped<SummaryApiService>();
 await builder.Build().RunAsync();

@@ -1,0 +1,131 @@
+﻿@page "/services"
+
+@using Tekus.Frontend.Models
+@using Tekus.Frontend.Services
+@inject ServiceApiService Api
+
+
+<MudText Typo="Typo.h4" Class="mb-2">
+    Servicios
+</MudText>
+
+<MudText Typo="Typo.caption" Color="Color.Secondary" Class="mb-4">
+    Listado global de servicios registrados
+</MudText>
+
+<MudTextField @bind-Value="_search"
+              Placeholder="Buscar por servicio o proveedor"
+              Variant="Variant.Outlined"
+              Immediate="true"
+              DebounceInterval="400"
+              Adornment="Adornment.Start"
+              AdornmentIcon="@Icons.Material.Filled.Search"
+              Class="mb-4"
+              OnKeyDown="OnSearchKeyDown" />
+
+<MudTable T="ServiceDto"
+          @ref="_table"
+          ServerData="LoadServerData"
+          RowsPerPage="10"
+          Dense="true"
+          Hover="true">
+
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel T="ServiceDto" SortLabel="name">
+                Servicio
+            </MudTableSortLabel>
+        </MudTh>
+
+        <MudTh>
+            <MudTableSortLabel T="ServiceDto" SortLabel="provider">
+                Proveedor
+            </MudTableSortLabel>
+        </MudTh>
+
+        <MudTh>
+            <MudTableSortLabel T="ServiceDto" SortLabel="hourValueUsd">
+                Valor hora (USD)
+            </MudTableSortLabel>
+        </MudTh>
+
+        <MudTh>
+            Países
+        </MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd>@context.Name</MudTd>
+
+        <MudTd>
+            @context.ProviderName
+        </MudTd>
+
+        <MudTd>
+            @context.HourValueUsd
+        </MudTd>
+
+        <MudTd>
+            @if (context.Countries.Any())
+            {
+                @string.Join(", ", context.Countries.Select(c => c.Name))
+            }
+            else
+            {
+                <MudText Typo="Typo.caption" Color="Color.Secondary">—</MudText>
+            }
+        </MudTd>
+    </RowTemplate>
+
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 5, 10, 20 }" />
+    </PagerContent>
+
+</MudTable>
+
+@code {
+
+    private MudTable<ServiceDto> _table = default!;
+    private string _search = string.Empty;
+
+    private async Task<TableData<ServiceDto>> LoadServerData(
+        TableState state,
+        CancellationToken token)
+    {
+        var page = state.Page + 1;
+        var pageSize = state.PageSize;
+
+        var orderBy = state.SortLabel;
+        var orderAsc = state.SortDirection != SortDirection.Descending;
+
+        var result = await Api.GetServicesAsync(
+            page,
+            pageSize,
+            _search,
+            orderBy,
+            orderAsc
+        );
+
+        return new TableData<ServiceDto>
+        {
+            TotalItems = result.TotalItems,
+            Items = result.Items
+        };
+    }
+
+    private async Task OnSearchKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && _table is not null)
+        {
+            await _table.ReloadServerData();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _table is not null)
+        {
+            await _table.ReloadServerData();
+        }
+    }
+}

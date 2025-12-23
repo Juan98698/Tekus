@@ -30,7 +30,9 @@ namespace Tekus.Application.DependencyInjection
             services.AddScoped<GetSummaryReportUseCase>();
             services.AddScoped<GetSummaryUseCase>();
             services.AddScoped<SyncCountriesToServiceUseCase>();
-           
+            services.AddScoped<ListServicesPagedUseCase>();
+            
+
             return services;
         }
     }

@@ -15,6 +15,8 @@ namespace Tekus.Infrastructure.Persistence.Context
 
         public DbSet<Provider> Providers => Set<Provider>();
 
+        public DbSet<Service> Services => Set<Service>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(TekusDbContext).Assembly);

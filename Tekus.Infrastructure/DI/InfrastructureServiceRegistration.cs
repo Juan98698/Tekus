@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Tekus.Application.Interfaces.Repositories;
 using Tekus.Infrastructure.Persistence;
 using Tekus.Infrastructure.Persistence.Context;
+using Tekus.Infrastructure.Persistence.Repositories;
 
 
 namespace Tekus.Infrastructure.DI
@@ -23,6 +24,7 @@ namespace Tekus.Infrastructure.DI
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IProviderRepository, ProviderRepository>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
 
             return services;
         }

@@ -41,8 +41,8 @@ namespace Tekus.Infrastructure.Persistence
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
         public async Task<PagedResult<Service>> GetServicesByProviderAsync(
-    Guid providerId,
-    PagedRequest request)
+      Guid providerId,
+      PagedRequest request)
         {
             var query = _context.Providers
                 .Where(p => p.Id == providerId)
@@ -50,8 +50,44 @@ namespace Tekus.Infrastructure.Persistence
                 .Include(s => s.Countries)
                 .AsQueryable();
 
+           
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                query = query.Where(s =>
+                    s.Name.Contains(request.Search));
+            }
+
+         
+            if (!string.IsNullOrWhiteSpace(request.OrderBy))
+            {
+                switch (request.OrderBy.ToLower())
+                {
+                    case "name":
+                        query = request.OrderAsc
+                            ? query.OrderBy(s => s.Name)
+                            : query.OrderByDescending(s => s.Name);
+                        break;
+
+                    case "hourvalueusd":
+                        query = request.OrderAsc
+                            ? query.OrderBy(s => s.HourValueUsd)
+                            : query.OrderByDescending(s => s.HourValueUsd);
+                        break;
+
+                    default:
+                        query = query.OrderBy(s => s.Name);
+                        break;
+                }
+            }
+            else
+            {
+                query = query.OrderBy(s => s.Name);
+            }
+
+        
             var total = await query.CountAsync();
 
+           
             var items = await query
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
