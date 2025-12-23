@@ -9,12 +9,13 @@
 <MudButton Color="Color.Primary" OnClick="OpenCreateDialog">
     Create Provider
 </MudButton>
-
 <MudTable T="ProviderDto"
-          Items="_providers"
-          RowsPerPage="_pageSize"
-          page="@(_page - 1)"
-          pageChanged="OnPageChanged">
+          @ref="_table"
+          ServerData="LoadServerData"
+          RowsPerPage="10"
+          RowsPerPageOptions="new int[] { 5, 10, 20 }"
+          Hover="true"
+          Dense="true">
 
     <HeaderContent>
         <MudTh>Nombre</MudTh>
@@ -78,29 +79,37 @@
         </MudTd>
     </RowTemplate>
 
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+
 </MudTable>
 
 @code {
-    private List<ProviderDto> _providers = [];
-    private int _page = 1;
-    private int _pageSize = 10;
+    
+   
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        await LoadProviders();
+        return Task.CompletedTask;
+    }
+    private MudTable<ProviderDto> _table;
+    private async Task<TableData<ProviderDto>> LoadServerData(
+    TableState state,
+    CancellationToken cancellationToken)
+    {
+        var page = state.Page + 1;
+        var pageSize = state.PageSize;
+
+        var result = await Api.GetProvidersAsync(page, pageSize);
+
+        return new TableData<ProviderDto>
+        {
+            TotalItems = result.TotalItems,
+            Items = result.Items
+        };
     }
 
-    private async Task LoadProviders()
-    {
-        var result = await Api.GetProvidersAsync(_page, _pageSize);
-        _providers = result.Items;
-    }
-
-    private async Task OnPageChanged(int page)
-    {
-        _page = page + 1;
-        await LoadProviders();
-    }
 
     private async Task OpenServicesDialog(ProviderDto provider)
     {
@@ -150,7 +159,7 @@
         var result = await dialog.Result;
 
         if (!result.Canceled)
-            await LoadProviders();
+            await _table!.ReloadServerData();
     }
 
     private async Task OpenCreateDialog()
@@ -171,7 +180,7 @@
         var result = await dialog.Result;
 
         if (!result.Canceled)
-            await LoadProviders();
+           await _table!.ReloadServerData();
     }
 
     private async Task OpenEditProviderDialog(ProviderDto provider)
@@ -198,7 +207,7 @@
         var result = await dialog.Result;
 
         if (!result.Canceled)
-            await LoadProviders();
+           await _table!.ReloadServerData();
     }
 
     private async Task ConfirmDeleteProvider(ProviderDto provider)
@@ -221,7 +230,7 @@
                     Severity.Success
                 );
 
-                await LoadProviders();
+                await _table!.ReloadServerData();
             }
             catch (HttpRequestException ex)
             {

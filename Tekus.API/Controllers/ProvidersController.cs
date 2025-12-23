@@ -67,10 +67,25 @@ namespace Tekus.API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetProviders([FromQuery] PagedRequest request)
+        public async Task<ActionResult<PagedResult<ProviderListItemResponse>>> GetProviders(
+    [FromQuery] PagedRequest request)
         {
             var result = await _listProvidersUseCase.ExecuteAsync(request);
-            return Ok(result);
+
+            return Ok(new PagedResult<ProviderListItemResponse>
+            {
+                Page = result.Page,
+                PageSize = result.PageSize,
+                TotalItems = result.TotalItems,
+                Items = result.Items.Select(p => new ProviderListItemResponse
+                {
+                    Id = p.Id,
+                    Nit = p.Nit,
+                    Name = p.Name,
+                    Email = p.Email,
+                    CustomFields = p.CustomFields.ToDictionary(k => k.Key, v => v.Value)
+                }).ToList()
+            });
         }
 
 

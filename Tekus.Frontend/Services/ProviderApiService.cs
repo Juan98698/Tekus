@@ -1,25 +1,28 @@
-﻿    using System.Net.Http;
-    using System.Net.Http.Json;
-    using Tekus.Frontend.Models;
-    using System.Text.Json;
-    namespace Tekus.Frontend.Services
+﻿using System.Net.Http;
+using System.Net.Http.Json;
+using Tekus.Frontend.Models;
+using System.Text.Json;
+
+using Tekus.Frontend.Models.Common;
+namespace Tekus.Frontend.Services
+{
+    public class ProviderApiService
     {
-        public class ProviderApiService
+        private readonly HttpClient _http;
+
+        public ProviderApiService(HttpClient http)
         {
-            private readonly HttpClient _http;
+            _http = http;
+        }
 
-            public ProviderApiService(HttpClient http)
-            {
-                _http = http;
-            }
-
-            public async Task<PagedResult<ProviderDto>> GetProvidersAsync(
-                int page = 1,
-                int pageSize = 10)
-            {
-                return await _http.GetFromJsonAsync<PagedResult<ProviderDto>>(
-                    $"api/providers?page={page}&pageSize={pageSize}");
-            }
+        public async Task<PagedResult<ProviderDto>> GetProvidersAsync(
+        int page,
+        int pageSize)
+        {
+            return await _http.GetFromJsonAsync<PagedResult<ProviderDto>>(
+                $"api/providers?page={page}&pageSize={pageSize}"
+            ) ?? new();
+        }
 
         public async Task<PagedResult<ServiceDto>> GetServicesByProviderAsync(
         Guid providerId,
@@ -33,11 +36,11 @@
 
 
         public async Task<ProviderDto> CreateProviderAsync(CreateProviderRequest request)
-            {
-                var resp = await _http.PostAsJsonAsync("api/providers", request);
+        {
+            var resp = await _http.PostAsJsonAsync("api/providers", request);
             await EnsureSuccessAsync(resp);
             return await resp.Content.ReadFromJsonAsync<ProviderDto>();
-            }
+        }
 
         public async Task UpdateProviderAsync(UpdateProviderRequest provider)
         {
@@ -99,14 +102,14 @@
             Guid providerId,
             Guid serviceId,
             List<string> countryCodes)
-             {
+        {
             var response = await _http.PostAsJsonAsync(
                 $"/api/providers/{providerId}/services/{serviceId}/countries",
                 countryCodes
             );
 
-             response.EnsureSuccessStatusCode();
-             }
+            response.EnsureSuccessStatusCode();
+        }
         public async Task<ServiceDto> GetServiceByIdAsync(
          Guid providerId,
          Guid serviceId)
@@ -119,7 +122,7 @@
         public async Task<ServiceDto> AddServiceAsync(
             Guid providerId,
             AddServiceRequest request)
-             {
+        {
             var response = await _http.PostAsJsonAsync(
                 $"/api/providers/{providerId}/services",
                 request
@@ -129,7 +132,7 @@
 
             return await response.Content.ReadFromJsonAsync<ServiceDto>()
                    ?? throw new Exception("Error creating service");
-             }
+        }
 
 
         private async Task EnsureSuccessAsync(HttpResponseMessage response)
@@ -160,12 +163,12 @@
                 }
             }
 
-                         throw new HttpRequestException(
-                         $"Error HTTP {(int)response.StatusCode}",
-                             null,
-                                 response.StatusCode
-                                );
+            throw new HttpRequestException(
+            $"Error HTTP {(int)response.StatusCode}",
+                null,
+                    response.StatusCode
+                   );
         }
 
     }
-    }
+}
