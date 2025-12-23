@@ -20,8 +20,10 @@
               Class="mb-4"             
               OnKeyDown="OnSearchKeyDown" />
 
-              
-             
+<MudText Typo="Typo.caption" Color="Color.Secondary" Class="mb-2">
+    Haz clic en los encabezados para ordenar
+</MudText>
+
 
 <MudTable T="ProviderDto"
           @ref="_table"
@@ -32,23 +34,29 @@
        
 
    <HeaderContent>
-    <MudTh>
-        <MudTableSortLabel T="ProviderDto" SortLabel="name">
-            Nombre
-        </MudTableSortLabel>
-    </MudTh>
+        <MudTh>
+            <MudTableSortLabel T="ProviderDto"
+                               SortLabel="name"
+                               InitialDirection="SortDirection.None">
+                Nombre
+            </MudTableSortLabel>
+        </MudTh>
 
-    <MudTh>
-        <MudTableSortLabel T="ProviderDto" SortLabel="nit">
-            NIT
-        </MudTableSortLabel>
-    </MudTh>
+        <MudTh>
+            <MudTableSortLabel T="ProviderDto"
+                               SortLabel="nit"
+                               InitialDirection="SortDirection.None">
+                NIT
+            </MudTableSortLabel>
+        </MudTh>
 
-    <MudTh>
-        <MudTableSortLabel T="ProviderDto" SortLabel="email">
-            Email
-        </MudTableSortLabel>
-    </MudTh>
+        <MudTh>
+            <MudTableSortLabel T="ProviderDto"
+                               SortLabel="email"
+                               InitialDirection="SortDirection.None">
+                Email
+            </MudTableSortLabel>
+        </MudTh>
 
     <MudTh>
         Campos Personalizados
@@ -121,12 +129,9 @@
 
 @code {
 
-    protected override Task OnInitializedAsync()
-    {
-        return Task.CompletedTask;
-    }
+
     private MudTable<ProviderDto> _table;
- 
+
     private async Task<TableData<ProviderDto>> LoadServerData(
     TableState state,
     CancellationToken cancellationToken)
@@ -151,8 +156,8 @@
             Items = result.Items
         };
     }
-    
 
+    private string _search = string.Empty;
     private async Task OnSearchKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter" && _table is not null)
@@ -161,28 +166,6 @@
             await _table.ReloadServerData();
         }
     }
-
-    private string _search = string.Empty;
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-            await _table!.ReloadServerData();
-    }
-
-    private async Task OnSearchChanged(string value)
-    {
-        _search = value;
-        await _table!.ReloadServerData();
-    }
-    private async Task ReloadTable(string _)
-    {
-        if (_table is not null)
-        {
-            
-            await _table.ReloadServerData();
-        }
-    }
-  
 
     private async Task OpenServicesDialog(ProviderDto provider)
     {
