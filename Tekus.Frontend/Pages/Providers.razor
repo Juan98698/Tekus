@@ -9,21 +9,55 @@
 <MudButton Color="Color.Primary" OnClick="OpenCreateDialog">
     Create Provider
 </MudButton>
+
+<MudTextField @bind-Value="_search"
+              Placeholder="Buscar por nombre o NIT"
+              Variant="Variant.Outlined"
+              Immediate="true"
+              DebounceInterval="400"
+              Adornment="Adornment.Start"
+              AdornmentIcon="@Icons.Material.Filled.Search"
+              Class="mb-4"             
+              OnKeyDown="OnSearchKeyDown" />
+
+              
+             
+
 <MudTable T="ProviderDto"
           @ref="_table"
           ServerData="LoadServerData"
-          RowsPerPage="10"
-          RowsPerPageOptions="new int[] { 5, 10, 20 }"
+          RowsPerPage="10"        
           Hover="true"
           Dense="true">
+       
 
-    <HeaderContent>
-        <MudTh>Nombre</MudTh>
-        <MudTh>NIT</MudTh>
-        <MudTh>Email</MudTh>
-        <MudTh>Campos Personalizados</MudTh>
-        <MudTh>Acciones</MudTh>
-    </HeaderContent>
+   <HeaderContent>
+    <MudTh>
+        <MudTableSortLabel T="ProviderDto" SortLabel="name">
+            Nombre
+        </MudTableSortLabel>
+    </MudTh>
+
+    <MudTh>
+        <MudTableSortLabel T="ProviderDto" SortLabel="nit">
+            NIT
+        </MudTableSortLabel>
+    </MudTh>
+
+    <MudTh>
+        <MudTableSortLabel T="ProviderDto" SortLabel="email">
+            Email
+        </MudTableSortLabel>
+    </MudTh>
+
+    <MudTh>
+        Campos Personalizados
+    </MudTh>
+
+    <MudTh>
+        Acciones
+    </MudTh>
+</HeaderContent>
 
     <RowTemplate>
         <MudTd>@context.Name</MudTd>
@@ -80,20 +114,19 @@
     </RowTemplate>
 
     <PagerContent>
-        <MudTablePager />
+        <MudTablePager PageSizeOptions="new int[] { 5, 10, 20 }" />
     </PagerContent>
 
 </MudTable>
 
 @code {
-    
-   
 
     protected override Task OnInitializedAsync()
     {
         return Task.CompletedTask;
     }
     private MudTable<ProviderDto> _table;
+ 
     private async Task<TableData<ProviderDto>> LoadServerData(
     TableState state,
     CancellationToken cancellationToken)
@@ -101,7 +134,16 @@
         var page = state.Page + 1;
         var pageSize = state.PageSize;
 
-        var result = await Api.GetProvidersAsync(page, pageSize);
+        string orderBy = state.SortLabel;
+        bool orderAsc = state.SortDirection != SortDirection.Descending;
+
+        var result = await Api.GetProvidersAsync(
+            page,
+            pageSize,
+            _search,
+            orderBy,
+            orderAsc
+        );
 
         return new TableData<ProviderDto>
         {
@@ -109,7 +151,38 @@
             Items = result.Items
         };
     }
+    
 
+    private async Task OnSearchKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && _table is not null)
+        {
+               
+            await _table.ReloadServerData();
+        }
+    }
+
+    private string _search = string.Empty;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await _table!.ReloadServerData();
+    }
+
+    private async Task OnSearchChanged(string value)
+    {
+        _search = value;
+        await _table!.ReloadServerData();
+    }
+    private async Task ReloadTable(string _)
+    {
+        if (_table is not null)
+        {
+            
+            await _table.ReloadServerData();
+        }
+    }
+  
 
     private async Task OpenServicesDialog(ProviderDto provider)
     {
