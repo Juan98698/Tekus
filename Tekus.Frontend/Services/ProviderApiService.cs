@@ -51,6 +51,22 @@ namespace Tekus.Frontend.Services
             return await _http.GetFromJsonAsync<PagedResult<ServiceDto>>(url)
                    ?? new();
         }
+        public Task<PagedResult<ServiceDto>> GetServicesByProviderAsync(
+        Guid providerId,
+        int page,
+        int pageSize,
+        string orderBy,
+        bool orderAsc)
+        {
+            return GetServicesByProviderAsync(
+                providerId,
+                page,
+                pageSize,
+                string.Empty,
+                orderBy ?? string.Empty,
+                orderAsc
+            );
+        }
 
 
         public async Task<ProviderDto> CreateProviderAsync(CreateProviderRequest request)
