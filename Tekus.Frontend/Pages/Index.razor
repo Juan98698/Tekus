@@ -1,9 +1,32 @@
 ﻿@page "/"
 
-<MudText Typo="Typo.h4">
-    Bienvenido a Tekus
-</MudText>
+<MudPaper Class="pa-6" Elevation="2" MaxWidth="700px">
 
-<MudButton Color="Color.Primary" Href="/providers">
-    Ir a Providers
-</MudButton>
+    <MudText Typo="Typo.h4" GutterBottom>
+        Bienvenido a Tekus
+    </MudText>
+
+    <MudText Typo="Typo.body1" GutterBottom>
+        Tekus S.A.S. es una plataforma web diseñada para 📌administrar los servicios ofrecidos
+        por sus proveedores, permitiendo 🌎relacionar cada servicio con uno o varios países
+        donde es ofrecido.
+    </MudText>
+
+    <MudText Typo="Typo.body1" GutterBottom>
+        A través de esta aplicación puedes 🛠️crear, editar y listar proveedores y servicios,
+        facilitando la gestión organizada de la oferta de servicios a nivel internacional.
+    </MudText>
+
+    <MudDivider Class="my-4" />
+    <MudText Typo="Typo.body1" GutterBottom>
+        El módulo <b>Resumen</b> permite obtener una visión global de la operación, mostrando 📊indicadores
+        agregados relacionados con la oferta de servicios y su cobertura geografica. Esta seccion facilita
+        el análisis de la distribución de servicios y proveedores país, destancando los países 
+        con mayor participación y permitiendo una lectura rapida del estado general del sistema.
+    </MudText>
+   
+    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-4">
+        👉  Comienza explorando los proveedores y sus servicios desde el menú lateral.
+    </MudAlert>
+
+</MudPaper>
