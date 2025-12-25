@@ -51,7 +51,7 @@ GO
 
 --   Datos iniciales Tekus
 
-USE TekusDB;
+USE Tekus;
 GO
 
  --  Providers 
@@ -117,4 +117,5 @@ GO
 
 SELECT * FROM Providers;
 SELECT * FROM Service;
+
 SELECT * FROM ServiceCountries;
