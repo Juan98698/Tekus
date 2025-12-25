@@ -22,19 +22,24 @@ Tekus
 └── Tekus.Frontend        → Blazor WASM + MudBlazor
 
 
-**#Principios aplicados#**
+**Principios aplicados**
+
 ✔ Separation of Concerns
 ✔ Dependency Inversion
 ✔ SRP (Single Responsibility)
 ✔ Backend-driven UI (server-side data handling)
-⚙️ Stack tecnológico
-Backend
+
+**⚙️ Stack tecnológico**
+**Backend**
+
 .NET 9
 ASP.NET Core Web API
 Entity Framework Core
 SQL Server
 Swagger
-Frontend
+
+**Frontend**
+
 Blazor WebAssembly
 MudBlazor
 HTTPClient
