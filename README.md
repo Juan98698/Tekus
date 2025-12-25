@@ -1,6 +1,7 @@
-#🧩 Tekus – Providers & Services Management#
+**🧩 Tekus – Providers & Services Management**
 Proyecto Full Stack construido con .NET + Blazor WebAssembly + MudBlazor, siguiendo principios de Clean Architecture, con soporte completo de paginación, búsqueda y ordenamiento en backend.
-#📌 Descripción general#
+
+**📌 Descripción general**
 Tekus es una aplicación para la gestión de proveedores y servicios, donde:
 Un Proveedor puede tener múltiples Servicios
 Un Servicio puede estar asociado a múltiples Países
@@ -21,7 +22,7 @@ Tekus
 └── Tekus.Frontend        → Blazor WASM + MudBlazor
 
 
-#Principios aplicados#
+**#Principios aplicados#**
 ✔ Separation of Concerns
 ✔ Dependency Inversion
 ✔ SRP (Single Responsibility)
@@ -39,8 +40,9 @@ MudBlazor
 HTTPClient
 Server-side pagination
 
-#📦 Funcionalidades principales#
-#👤 Proveedores#
+**📦 Funcionalidades principales**
+**👤 Proveedores**
+
 Listado paginado
 Búsqueda por nombre o NIT
 Ordenamiento por columnas
@@ -48,7 +50,8 @@ Crear / editar / eliminar proveedor
 Ver servicios del proveedor (modal)
 Crear / editar / eliminar servicio(modal)
 
-#🛠️ Servicios (Global)#
+**🛠️ Servicios (Global)**
+
 Listado global de todos los servicios
 Búsqueda por nombre de servicio o proveedor
 Ordenamiento por:
@@ -114,11 +117,27 @@ Ordenamiento:
     Servicio
 </MudTableSortLabel>
 
-#🧪 Cómo ejecutar el proyecto#
+**🧪 Cómo ejecutar el proyecto**
 
 Backend
 
-Configura la cadena de conexión en appsettings.json y appsettings.Development.json en el proyecto Tekus.API
+1. Abra SQL server y copir, pegar y luego ejecute el Script que esta en el archivo tipo text "Script SQL para creacion ..." en el mismo orden alli expuesto:
+-> create database tekus -> crear tablas providers, service y ServicesCountries
+-> Insertar datos de las tablas
+al final tendra 10 registros en Providers, 10 en Service y 20 en ServicesCountries
+2. Configura la cadena de conexión en appsettings.json y appsettings.Development.json en el proyecto Tekus.API
+3. ConnectionStrings": {
+    "Default": "Server={NameServer};Database=Tekus;Encrypt=false;User Id={UserName};Password={your_password};"
+  },
+4. Ejecuta la API / Frontend apuntando al nombre Tekus
+
+5. click derecho en la solución 
+-> Configure Startup Pojects 
+-> Multiple startup projects 
+-> Tekus.API Start y Tekus.Frontend Start, el resto None 
+-> Aplicar, Aceptar
+
+*Otra forma es a traves de migraciones *  
 
 Ejecuta migraciones:
 
@@ -135,7 +154,6 @@ click derecho en la solución
 
 Swagger disponible en:
 https://localhost:7001/swagger
-
 
 
 Frontend
