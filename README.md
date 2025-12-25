@@ -24,25 +24,25 @@ Tekus
 
 **Principios aplicados**
 
-✔ Separation of Concerns
-✔ Dependency Inversion
-✔ SRP (Single Responsibility)
+✔ Separation of Concerns,
+✔ Dependency Inversion,
+✔ SRP (Single Responsibility),
 ✔ Backend-driven UI (server-side data handling)
 
 **⚙️ Stack tecnológico**
 **Backend**
 
-.NET 9
-ASP.NET Core Web API
-Entity Framework Core
-SQL Server
+.NET 9,
+ASP.NET Core Web API,
+Entity Framework Core,
+SQL Server,
 Swagger
 
 **Frontend**
 
-Blazor WebAssembly
-MudBlazor
-HTTPClient
+Blazor WebAssembly,
+MudBlazor,
+HTTPClient,
 Server-side pagination
 
 **📦 Funcionalidades principales**
