@@ -1,3 +1,4 @@
+-- Script SQL Server 
 -- Crear base de datos 
 CREATE DATABASE Tekus;
 GO
@@ -115,7 +116,12 @@ INSERT INTO ServiceCountries (ServiceId, Code, Name)
 SELECT Id, 'MX', 'Mexico' FROM Service WHERE HourValueUsd < 150;
 GO
 
+-- Verificar contenido de la tablas 
+
 SELECT * FROM Providers;
 SELECT * FROM Service;
-
 SELECT * FROM ServiceCountries;
+
+-- Verificar Eliminacion en cascada 
+DELETE FROM Providers WHERE Nit = '900100002';
+
