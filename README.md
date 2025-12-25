@@ -137,7 +137,7 @@ al final tendra 10 registros en Providers, 10 en Service y 20 en ServicesCountri
 -> Tekus.API Start y Tekus.Frontend Start, el resto None 
 -> Aplicar, Aceptar
 
-*Otra forma es a traves de migraciones *  
+**Otra forma es a traves de migraciones**  
 
 Ejecuta migraciones:
 
