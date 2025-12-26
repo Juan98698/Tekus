@@ -1,0 +1,127 @@
+-- Script SQL Server 
+-- Crear base de datos 
+CREATE DATABASE Tekus;
+GO
+
+USE Tekus;
+GO
+
+--  Tabla: Providers
+
+CREATE TABLE Providers (
+Id UNIQUEIDENTIFIER NOT NULL
+CONSTRAINT PK_Providers PRIMARY KEY
+DEFAULT NEWSEQUENTIALID(),
+Nit NVARCHAR(50) NOT NULL,
+Name NVARCHAR(200) NOT NULL,
+Email NVARCHAR(200) NOT NULL,
+CustomFields NVARCHAR(MAX) NULL
+);
+GO
+
+--   Tabla: Service
+
+CREATE TABLE Service (
+Id UNIQUEIDENTIFIER NOT NULL
+CONSTRAINT PK_Service PRIMARY KEY
+DEFAULT NEWSEQUENTIALID(),
+Name NVARCHAR(200) NOT NULL,
+HourValueUsd DECIMAL(18,2) NOT NULL,
+ProviderId UNIQUEIDENTIFIER NOT NULL,
+CONSTRAINT FK_Service_Provider
+FOREIGN KEY (ProviderId)
+REFERENCES Providers(Id)
+ON DELETE CASCADE
+);
+GO
+
+--   Tabla: ServiceCountries 
+
+CREATE TABLE ServiceCountries (
+ServiceId UNIQUEIDENTIFIER NOT NULL,
+Code NVARCHAR(10) NOT NULL,
+Name NVARCHAR(100) NOT NULL,
+CONSTRAINT PK_ServiceCountries
+PRIMARY KEY (ServiceId, Code),
+CONSTRAINT FK_ServiceCountries_Service
+FOREIGN KEY (ServiceId)
+REFERENCES Service(Id)
+ON DELETE CASCADE
+);
+GO
+
+--   Datos iniciales Tekus
+
+USE Tekus;
+GO
+
+ --  Providers 
+
+INSERT INTO Providers (Nit, Name, Email, CustomFields)
+VALUES
+('900100001', 'Tech Solutions SAS', 'contacto@techsolutions.com', '{"Tipo":"IT","Nivel":"Gold"}'),
+('900100002', 'Cloud Andina', 'info@cloudandina.com', '{"Tipo":"Cloud"}'),
+('900100003', 'Data Analytics Corp', 'ventas@dataanalytics.com', '{"Tipo":"Data"}'),
+('900100004', 'Infra Services', 'soporte@infraservices.com', '{"Tipo":"Infraestructura"}'),
+('900100005', 'Cyber Secure', 'security@cybersecure.com', '{"Tipo":"Seguridad"}'),
+('900100006', 'AI Factory', 'hello@aifactory.com', '{"Tipo":"IA"}'),
+('900100007', 'DevOps LATAM', 'contact@devopslatam.com', '{"Tipo":"DevOps"}'),
+('900100008', 'Fintech Soft', 'info@fintechsoft.com', '{"Tipo":"Fintech"}'),
+('900100009', 'Health Systems', 'admin@healthsystems.com', '{"Tipo":"Salud"}'),
+('900100010', 'EduTech Pro', 'info@edutechpro.com', '{"Tipo":"Educación"}');
+GO
+
+  -- Services 
+
+INSERT INTO Service (Name, HourValueUsd, ProviderId)
+SELECT 'Consultoría Cloud', 120, Id FROM Providers WHERE Nit = '900100002';
+
+INSERT INTO Service (Name, HourValueUsd, ProviderId)
+SELECT 'Análisis de Datos', 150, Id FROM Providers WHERE Nit = '900100003';
+
+INSERT INTO Service (Name, HourValueUsd, ProviderId)
+SELECT 'Infraestructura TI', 100, Id FROM Providers WHERE Nit = '900100004';
+
+INSERT INTO Service (Name, HourValueUsd, ProviderId)
+SELECT 'Ciberseguridad', 180, Id FROM Providers WHERE Nit = '900100005';
+
+INSERT INTO Service (Name, HourValueUsd, ProviderId)
+SELECT 'Modelos de IA', 200, Id FROM Providers WHERE Nit = '900100006';
+
+INSERT INTO Service (Name, HourValueUsd, ProviderId)
+SELECT 'Pipelines DevOps', 140, Id FROM Providers WHERE Nit = '900100007';
+
+INSERT INTO Service (Name, HourValueUsd, ProviderId)
+SELECT 'Core Bancario', 160, Id FROM Providers WHERE Nit = '900100008';
+
+INSERT INTO Service (Name, HourValueUsd, ProviderId)
+SELECT 'Sistemas Clínicos', 130, Id FROM Providers WHERE Nit = '900100009';
+
+INSERT INTO Service (Name, HourValueUsd, ProviderId)
+SELECT 'Plataformas Educativas', 110, Id FROM Providers WHERE Nit = '900100010';
+
+INSERT INTO Service (Name, HourValueUsd, ProviderId)
+SELECT 'Desarrollo Software', 125, Id FROM Providers WHERE Nit = '900100001';
+GO
+
+--   ServiceCountries
+ 
+INSERT INTO ServiceCountries (ServiceId, Code, Name)
+SELECT Id, 'CO', 'Colombia' FROM Service;
+
+INSERT INTO ServiceCountries (ServiceId, Code, Name)
+SELECT Id, 'US', 'United States' FROM Service WHERE HourValueUsd >= 150;
+
+INSERT INTO ServiceCountries (ServiceId, Code, Name)
+SELECT Id, 'MX', 'Mexico' FROM Service WHERE HourValueUsd < 150;
+GO
+
+-- Verificar contenido de la tablas 
+
+SELECT * FROM Providers;
+SELECT * FROM Service;
+SELECT * FROM ServiceCountries;
+
+-- Verificar Eliminacion en cascada 
+DELETE FROM Providers WHERE Nit = '900100002';
+
