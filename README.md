@@ -93,7 +93,7 @@ public class PagedResult<T>
 }
 Esto permite que MudTable consuma datos de forma eficiente sin cargar todo en memoria.
 
-#🔌 Endpoints principales#
+**🔌 Endpoints principales**
 
 Providers
 
@@ -126,7 +126,7 @@ Ordenamiento:
 
 Backend
 
-1. Abra SQL server y copir, pegar y luego ejecute el Script que esta en el archivo tipo text "Script SQL para creacion ..." en el mismo orden alli expuesto:
+1. Abra SQL server pegar y luego ejecute el Script que esta en el archivo tipo text "Script SQL para creacion ..." en este mismo repositorio, en el mismo orden alli expuesto:
 -> create database tekus -> crear tablas providers, service y ServicesCountries
 -> Insertar datos de las tablas
 al final tendra 10 registros en Providers, 10 en Service y 20 en ServicesCountries
