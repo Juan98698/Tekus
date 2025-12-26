@@ -165,3 +165,14 @@ Frontend
 
 cd Tekus.Frontend
 dotnet run
+
+<img width="1918" height="922" alt="image" src="https://github.com/user-attachments/assets/00759a02-f539-4c86-870f-57c968a8ea48" />
+
+<img width="1919" height="925" alt="image" src="https://github.com/user-attachments/assets/b0a64df9-7bb0-443e-9a8e-92174bf56f17" />
+
+<img width="1919" height="923" alt="image" src="https://github.com/user-attachments/assets/33bb7636-09da-4fc3-8237-14a725c5ff66" />
+
+<img width="1919" height="925" alt="image" src="https://github.com/user-attachments/assets/f694b2c9-f1b1-454b-8d42-9ab97cd85f8a" />
+
+
+
