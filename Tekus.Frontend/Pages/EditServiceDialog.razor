@@ -65,10 +65,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // 1️⃣ Cargar países disponibles
+        //  Cargar países disponibles
         _availableCountries = await CountryApi.GetCountriesAsync();
 
-        // 2️⃣ Cargar datos del servicio (desde el parámetro)
+        // Cargar datos del servicio (desde el parámetro)
         _model.Name = Service.Name;
         _model.HourValueUsd = Service.HourValueUsd;
 

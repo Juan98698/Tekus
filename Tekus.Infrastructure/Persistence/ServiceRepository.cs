@@ -27,7 +27,7 @@ namespace Tekus.Infrastructure.Persistence.Repositories
                 .Include(s => s.Countries)
                 .AsQueryable();
 
-            // 🔍 Search
+            //  Search
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 query = query.Where(s =>
@@ -35,7 +35,7 @@ namespace Tekus.Infrastructure.Persistence.Repositories
                     s.Provider.Name.Contains(request.Search));
             }
 
-            // ↕️ Order
+            //  Order
             if (!string.IsNullOrWhiteSpace(request.OrderBy))
             {
                 switch (request.OrderBy.ToLower())

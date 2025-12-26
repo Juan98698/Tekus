@@ -33,7 +33,7 @@ namespace Tekus.Application.UseCases.Services
 
             var allCountries = await _countryProvider.GetAllAsync();
 
-            // 🔁 sincronización real (no solo agregar)
+            //  sincronización real (no solo agregar)
             service.ClearCountries();
 
             foreach (var code in request.CountryCodes)

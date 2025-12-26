@@ -121,7 +121,6 @@ namespace Tekus.Infrastructure.Persistence
         public async Task<PagedResult<Provider>> GetPagedAsync(PagedRequest request)
         {
             var query = _context.Providers.AsQueryable();
-
             
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
@@ -129,8 +128,6 @@ namespace Tekus.Infrastructure.Persistence
                     p.Name.Contains(request.Search) ||
                     p.Nit.Contains(request.Search));
             }
-
-
             
             if (!string.IsNullOrWhiteSpace(request.OrderBy))
             {
@@ -161,14 +158,11 @@ namespace Tekus.Infrastructure.Persistence
             }
             else
             {
-                
                 query = query.OrderBy(p => p.Name);
             }
-
             
             var total = await query.CountAsync();
-
-            
+        
             var items = await query
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)

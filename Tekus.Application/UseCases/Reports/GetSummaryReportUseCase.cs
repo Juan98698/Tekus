@@ -52,9 +52,9 @@ namespace Tekus.Application.UseCases.Reports
             };
         }
 
-        // ==============================
-        // 🔧 MÉTODO DE ORDENAMIENTO
-        // ==============================
+
+        //  MÉTODO DE ORDENAMIENTO
+    
         private static IQueryable<CountryCountResponse> ApplyOrdering(
             IQueryable<CountryCountResponse> query,
             PagedRequest request)
